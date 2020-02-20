@@ -1,8 +1,4 @@
-# SECW2 (Team8 Portfolio B)
-
-Software Engineering Coursework 2
-
----
+# Team8 Portfolio B
 
 ## 1. Which language are we going to use.
 Python: could use in further jobs, could start coding now
