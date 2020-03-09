@@ -5,9 +5,10 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 1.1
+# @Version: 1.2
 
 
+import sqlite3
 # imports
 import tkinter as tk
 from tkinter import Menu
@@ -41,10 +42,8 @@ class GUI:
         self.tab_control.pack(expand=1, fill='both')
 
         # Text instruction
-        self.instruction_r = ttk.Label(self.record_tab, text='You can record a question manually in this tab.\n'
-                                                             'Press the buttons below to choose the type of the '
-                                                             'question.\n '
-                                                             'Press "Generate!" to record the question.')
+        # TODO add instruction text
+        self.instruction_r = ttk.Label(self.record_tab, text='You can record a question manually in this tab.')
         self.instruction_r.grid(column=0, row=0, padx=10, pady=8)
 
         # Create a labelFrame to contain the 2 buttons of choosing question type
@@ -109,7 +108,7 @@ class GUI:
         self.mc_wrong3_entry = ttk.Entry(self.record_q, width=50, textvariable=self.mc_wrong3)
         self.mc_wrong3_entry.grid(column=0, row=9, sticky="W", columnspan=2)
 
-        self.gen_mc_btn = ttk.Button(self.record_q, text='Generate!')
+        self.gen_mc_btn = ttk.Button(self.record_q, text='Generate!', command=self.gen_mc_db)
         self.gen_mc_btn.grid(column=0, row=10, padx=8, pady=5, sticky="W")
         self.clr_mc_btn = ttk.Button(self.record_q, text="Clear", command=self.clear_mc)
         self.clr_mc_btn.grid(column=1, row=10, padx=8, pady=5, sticky="W")
@@ -129,7 +128,7 @@ class GUI:
         self.tf_rad2 = tk.Radiobutton(self.record_q, text="False", variable=self.tf_answer, value=0)
         self.tf_rad2.grid(column=1, row=3, padx=8, pady=5, sticky="W")
 
-        self.gen_tf_btn = ttk.Button(self.record_q, text='Generate!')
+        self.gen_tf_btn = ttk.Button(self.record_q, text='Generate!', command=self.gen_tf_db)
         self.gen_tf_btn.grid(column=0, row=4, padx=8, pady=5, sticky="W")
         self.clr_tf_btn = ttk.Button(self.record_q, text='Clear', command=self.clear_tf)
         self.clr_tf_btn.grid(column=1, row=4, padx=8, pady=5, sticky="W")
@@ -139,7 +138,7 @@ class GUI:
     @staticmethod
     def _about_msg():
         msg.showinfo('Team 8 - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 1.1'
+                                             'Version 1.1\n'
                                              'Unit created by Tian ZHANG.')
 
     # initialize the record_tab with multiple choice, hide the t&f record widgets
@@ -209,6 +208,55 @@ class GUI:
     def clear_tf(self):
         self.tf_entered.delete(0, 'end')
 
+    def gen_mc_db(self):
+        # Initialize mc_question database with sqlite3
+        mc_q = self.mc_entered.get()
+        mc_c = self.category_selected.get()
+        mc_d = self.difficulty_selected.get()
+        mc_ca = self.mc_correct_entry.get()
+        mc_w1 = self.mc_wrong1_entry.get()
+        mc_w2 = self.mc_wrong2_entry.get()
+        mc_w3 = self.mc_wrong3_entry.get()
+        self.mc_question_ls = (mc_q, mc_c, mc_d, mc_ca, mc_w1, mc_w2, mc_w3)
+        '''
+        Connecting the db file and create cursor must be done in the function.
+        Otherwise it can't generate for a second time cause the cursor is closed!
+        So can't move it to __init__.
+        '''
+        self.conn = sqlite3.connect("mc_question.db")
+        self.c = self.conn.cursor()
+        self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+        QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
+        WRONG1 TEXT NOT NULL, WRONG2 TEXT NOT NULL, WRONG3 TEXT NOT NULL)''')
 
+        self.c.execute("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
+                       "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_question_ls)
+        self.conn.commit()
+        self.conn.close()
+
+    def gen_tf_db(self):
+        # Initialize tf_question database with sqlite3
+        tf_q = self.tf_entered.get()
+        tf_c = self.category_selected.get()
+        tf_d = self.difficulty_selected.get()
+        tf_ca = self.tf_answer.get()
+        self.tf_question_ls = (tf_q, tf_c, tf_d, tf_ca)
+        '''
+        Connecting the db file and create cursor must be done in the function.
+        Otherwise it can't generate for a second time cause the cursor is closed!
+        So can't move it to __init__.
+        '''
+        self.conn = sqlite3.connect("tf_question.db")
+        self.c = self.conn.cursor()
+        self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+        QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
+
+        self.c.execute("INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
+                       self.tf_question_ls)
+        self.conn.commit()
+        self.conn.close()
+
+
+# TODO add comments
 gui = GUI()
 gui.win.mainloop()
