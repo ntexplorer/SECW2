@@ -5,7 +5,7 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 1.3
+# @Version: 1.4
 
 # Imports
 import csv
@@ -22,7 +22,7 @@ class GUI:
         # Create instance
         self.win = tk.Tk()
         # Add a title
-        self.win.title('Add Questions')
+        self.win.title('Add Questions - Quiz System by Team 8')
         # Change the icon
         self.win.iconbitmap('add_q.ico')
         # Create a menu bar with author info
@@ -44,10 +44,11 @@ class GUI:
 
         # ====================== Element for record tab ========================
         # Text instruction for record tab
-        self.instruction_r = ttk.Label(self.record_tab, text='You can record a question manually in this tab.\n'
-                                                             'Press the buttons below to select the type of question.\n'
-                                                             'Press "Generate!" button to record question.\n'
-                                                             'Press "Clear" button to clear the input.')
+        self.instruction_r = ttk.Label(self.record_tab, text='* Record a question manually in this tab.\n'
+                                                             '* Press the buttons below to select the type of '
+                                                             'question.\n'
+                                                             '* Press "Generate!" button to record question.\n'
+                                                             '* Press "Clear" button to clear the input.')
         self.instruction_r.grid(column=0, row=0, padx=10, pady=8)
 
         # Create a labelFrame to contain the 2 buttons of choosing question type
@@ -143,25 +144,31 @@ class GUI:
 
         # ====================== Element for import tab ========================
         # Text instruction for import tab
-        self.instruction_i = ttk.Label(self.import_tab, text='You can import a csv file with questions in this tab.\n'
-                                                             '')
+        self.instruction_i = ttk.Label(self.import_tab, text='* Import data file with questions in this tab.\n'
+                                                             '* Both .csv and .txt file could be accepted.\n'
+                                                             '* Please make sure the file is in right format.\n'
+                                                             '* Please operate within the related area.')
         self.instruction_i.grid(column=0, row=0, padx=10, pady=8)
 
         # Create a labelFrame to contain the widgets to import mc questions from file
         self.import_mc_labelframe = ttk.LabelFrame(self.import_tab, text='Import multiple choice questions from file')
         self.import_mc_labelframe.grid(column=0, row=1, padx=10, pady=8)
 
-        # Create a button using filedialog.askopenfile to open a file
+        # Create a button using filedialog.askopenfilename to get the path of data file
         self.mc_imp_btn = ttk.Button(self.import_mc_labelframe, width=30, text='Import Multiple Choice data file',
                                      command=self.mc_file_import)
         self.mc_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
-        self.mc_file_path = ttk.Label(self.import_mc_labelframe, width=65, text='File opened: ')
+        self.mc_file_path = ttk.Label(self.import_mc_labelframe, width=55, text='File opened: ')
         self.mc_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
+        # Generate button to transfer the data into db file
         self.mc_gen_imp_btn = ttk.Button(self.import_mc_labelframe, width=30, text='Import Questions!',
                                          command=self.gen_mc_db_imp)
         self.mc_gen_imp_btn.grid(column=0, row=2, padx=8, pady=5, sticky="W")
+        # Using a list to contain all pieces of question data
+        # ** notice that every single piece must be a tuple to be recorded into a db file
         self.mc_import_ls = []
 
+        # Another labelFrame for TF data file import
         self.import_tf_labelframe = ttk.LabelFrame(self.import_tab, text='Import true or false questions from file')
         self.import_tf_labelframe.grid(column=0, row=2, padx=10, pady=8)
 
@@ -169,7 +176,7 @@ class GUI:
         self.tf_imp_btn = ttk.Button(self.import_tf_labelframe, width=30, text='Import True or False data file',
                                      command=self.tf_file_import)
         self.tf_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
-        self.tf_file_path = ttk.Label(self.import_tf_labelframe, width=65, text='File opened: ')
+        self.tf_file_path = ttk.Label(self.import_tf_labelframe, width=55, text='File opened: ')
         self.tf_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
         self.tf_gen_imp_btn = ttk.Button(self.import_tf_labelframe, width=30, text='Import Questions!',
                                          command=self.gen_tf_db_imp)
@@ -181,7 +188,7 @@ class GUI:
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team 8 - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 1.3\n'
+                                             'Version 1.4\n'
                                              'Unit created by Tian ZHANG.')
 
     # TODO add exceptions when no input for recording
@@ -213,7 +220,7 @@ class GUI:
         self.mc_wrong3_entry.grid_remove()
         self.gen_mc_btn.grid_remove()
         self.clr_mc_btn.grid_remove()
-
+        # Show the widgets for tf recording
         self.tf_text.grid()
         self.tf_entered.grid()
         self.tf_entered.focus()
@@ -225,6 +232,7 @@ class GUI:
 
     # when clicking the mc btn, remove all the widgets for tf
     def remove_tf(self):
+        # show the mc widgets
         self.mc_text.grid()
         self.mc_entered.grid()
         self.mc_entered.focus()
@@ -238,7 +246,7 @@ class GUI:
         self.mc_wrong3_entry.grid()
         self.gen_mc_btn.grid()
         self.clr_mc_btn.grid()
-
+        # remove all widgets for tf recording
         self.tf_text.grid_remove()
         self.tf_entered.grid_remove()
         self.tf_correct_text.grid_remove()
@@ -265,6 +273,7 @@ class GUI:
     Insert all the data of the question into the database file.
     After generation clear all the input with clear_mc function.
     Then pop up a msg box, close the cursor to end.
+    And pop up msg box for error exceptions.
     '''
 
     def gen_mc_db(self):
@@ -276,24 +285,35 @@ class GUI:
         mc_w1 = self.mc_wrong1_entry.get()
         mc_w2 = self.mc_wrong2_entry.get()
         mc_w3 = self.mc_wrong3_entry.get()
-        self.mc_question_ls = (mc_q, mc_c, mc_d, mc_ca, mc_w1, mc_w2, mc_w3)
-        '''
-        Connecting the db file and create cursor must be done in the function.
-        Otherwise it can't generate for a second time cause the cursor is closed!
-        So can't move it to __init__.
-        '''
-        self.conn = sqlite3.connect("mc_question.db")
-        self.c = self.conn.cursor()
-        self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-        QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
-        WRONG1 TEXT NOT NULL, WRONG2 TEXT NOT NULL, WRONG3 TEXT NOT NULL)''')
+        if not mc_q:
+            # If question is empty
+            msg.showerror('Error', 'Question cannot be empty, please try again.')
+        elif not mc_ca:
+            # if correct answer is empty
+            msg.showerror('Error', 'Correct answer cannot be empty! Please try again.')
+        elif not (mc_w1 and mc_w2 and mc_w3):
+            # if any of the wrong answers is empty
+            msg.showerror('Error', 'Three wrong answers are required, please try again.')
+        else:
+            # store the question into a tuple
+            self.mc_question_ls = (mc_q, mc_c, mc_d, mc_ca, mc_w1, mc_w2, mc_w3)
+            '''
+            Connecting the db file and create cursor must be done in the function.
+            Otherwise it can't generate for a second time cause the cursor is closed!
+            So can't move it to __init__.
+            '''
+            self.conn = sqlite3.connect("mc_question.db")
+            self.c = self.conn.cursor()
+            self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+            QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
+            WRONG1 TEXT NOT NULL, WRONG2 TEXT NOT NULL, WRONG3 TEXT NOT NULL)''')
 
-        self.c.execute("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
-                       "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_question_ls)
-        self.conn.commit()
-        self.conn.close()
-        self.clear_mc()
-        msg.showinfo('Success', 'Question recorded successfully!')
+            self.c.execute("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
+                           "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_question_ls)
+            self.conn.commit()
+            self.conn.close()
+            self.clear_mc()
+            msg.showinfo('Success', 'Question recorded successfully!')
 
     def gen_tf_db(self):
         # Initialize tf_question database with sqlite3
@@ -301,50 +321,66 @@ class GUI:
         tf_c = self.category_selected.get()
         tf_d = self.difficulty_selected.get()
         tf_ca = self.tf_answer.get()
-        self.tf_question_ls = (tf_q, tf_c, tf_d, tf_ca)
-        '''
-        Connecting the db file and create cursor must be done in the function.
-        Otherwise it can't generate for a second time cause the cursor is closed!
-        So can't move it to __init__.
-        '''
-        self.conn = sqlite3.connect("tf_question.db")
-        self.c = self.conn.cursor()
-        self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-        QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
+        if not tf_q:
+            # if the question is empty
+            msg.showerror('Error', 'Question cannot be empty, please try again.')
+        else:
+            self.tf_question_ls = (tf_q, tf_c, tf_d, tf_ca)
+            '''
+            Connecting the db file and create cursor must be done in the function.
+            Otherwise it can't generate for a second time cause the cursor is closed!
+            So can't move it to __init__.
+            '''
+            self.conn = sqlite3.connect("tf_question.db")
+            self.c = self.conn.cursor()
+            self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+            QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
 
-        self.c.execute("INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
-                       self.tf_question_ls)
-        self.conn.commit()
-        self.conn.close()
-        self.clear_tf()
-        msg.showinfo('Success', 'Question recorded successfully!')
+            self.c.execute("INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
+                           self.tf_question_ls)
+            self.conn.commit()
+            self.conn.close()
+            self.clear_tf()
+            msg.showinfo('Success', 'Question recorded successfully!')
 
     # ====================== End of function for record tab ========================
 
     # ====================== Function for import tab ========================
     def mc_file_import(self):
+        # using askopenfilename to get the full path of selected file
         self.mc_ask_open_file = tk.filedialog.askopenfilename()
+        # display the path on GUI for user to see
         self.mc_file_path['text'] = 'File opened: ' + self.mc_ask_open_file
+        # if the filename ends with csv then proceed with module csv
         if self.mc_ask_open_file[-3:] == "csv":
             with open(self.mc_ask_open_file, 'r') as mc_csv:
                 self.mc_reader = csv.reader(mc_csv)
                 for row in self.mc_reader:
                     self.mc_import_ls.append(row)
+        # if the filename ends with txt then use 'readlines' to read the data
         elif self.mc_ask_open_file[-3:] == 'txt':
             with open(self.mc_ask_open_file, 'r') as mc_txt:
                 self.mc_txt_data = mc_txt.readlines()
                 for line in self.mc_txt_data:
+                    # remove \n
                     new_line = line.replace("\n", "")
+                    # split the string by ","
                     str_to_ls = new_line.split(',')
+                    # turn the list into a tuple
                     gen_tuple = tuple(str_to_ls)
+                    # append to the list to proceed
                     self.mc_import_ls.append(gen_tuple)
-                    print(self.mc_import_ls)
+        elif not self.mc_ask_open_file:
+            # if no file chosen
+            msg.showinfo('No file chosen', 'Please choose a csv or txt file to proceed.')
         else:
+            # if the file chosen is not the right type, pop up a error box
             self.mc_ask_open_file = ''
             self.mc_file_path['text'] = 'File opened: '
             msg.showerror('Error', 'File type not supported!\nPlease try again.')
 
     def gen_mc_db_imp(self):
+        # if the list is empty (no data)
         if not self.mc_import_ls:
             msg.showerror('Error', 'No data imported!\nPlease try again.')
         else:
@@ -361,11 +397,14 @@ class GUI:
             self.conn.close()
             # Empty the list after importing
             self.mc_import_ls = []
+            # reset the path storage and display
             self.mc_ask_open_file = ''
             self.mc_file_path['text'] = 'File opened: '
+            # show msg box as a feedback
             msg.showinfo('Success', 'Question imported successfully!')
 
     def tf_file_import(self):
+        # see self.mc_file_import()
         self.tf_ask_open_file = tk.filedialog.askopenfilename()
         self.tf_file_path['text'] = 'File opened: ' + self.tf_ask_open_file
         if self.tf_ask_open_file[-3:] == 'csv':
@@ -381,7 +420,8 @@ class GUI:
                     str_to_ls_2 = new_line_2.split(',')
                     gen_tuple_2 = tuple(str_to_ls_2)
                     self.tf_import_ls.append(gen_tuple_2)
-                    print(self.tf_import_ls)
+        elif not self.tf_ask_open_file:
+            msg.showinfo('No file chosen', 'Please choose a csv or txt file to proceed.')
         else:
             self.tf_ask_open_file = ''
             self.tf_file_path['text'] = 'File opened: '
