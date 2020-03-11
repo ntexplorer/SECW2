@@ -79,7 +79,8 @@ class GUI:
         self.category = tk.StringVar()
         self.category_selected = ttk.Combobox(self.record_cate_diff, width=20, textvariable=self.category,
                                               state='readonly')
-        self.category_selected['values'] = ("Computer Science", "Cookery", "Nature")
+        self.category_selected['values'] = ("Computer Science", "Art", "Nature", "Food", "History", "Language",
+                                            "Sports", "Video Game", "Music")
         self.category_selected.grid(column=0, row=1, padx=8, pady=5, sticky="W")
         self.category_selected.current(0)
         self.cate_diff_text = ttk.Label(self.record_cate_diff, text='Choose the difficulty level:')
