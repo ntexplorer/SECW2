@@ -1,5 +1,0 @@
-Question6,Computer Science,Hard,0
-Question7,Nature,Medium,1
-Question8,Computer Science,Easy,0
-Question9,Nature,Hard,1
-Question10,Cookery,Medium,0

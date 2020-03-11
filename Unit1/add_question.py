@@ -191,9 +191,6 @@ class GUI:
                                              'Version 1.4\n'
                                              'Unit created by Tian ZHANG.')
 
-    # TODO add exceptions when no input for recording
-    # TODO commenting
-    # TODO add text content
     # ====================== Function for record tab ========================
     # initialize the record_tab with multiple choice widgets, hide the t&f record widgets
     def initial_record_status(self):

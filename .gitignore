@@ -85,3 +85,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Personal doc
+/Unit1/personal_doc/
