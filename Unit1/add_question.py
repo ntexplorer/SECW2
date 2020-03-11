@@ -5,7 +5,7 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 1.4
+# @Version: 1.5
 
 # Imports
 import csv
@@ -16,6 +16,10 @@ from tkinter import filedialog
 from tkinter import messagebox as msg
 from tkinter import ttk
 
+# Import template file for next and last GUI
+import last_GUI_sample as unit0
+import next_GUI_sample as unit2
+
 
 class GUI:
     def __init__(self):
@@ -24,10 +28,15 @@ class GUI:
         # Add a title
         self.win.title('Add Questions - Quiz System by Team 8')
         # Change the icon
-        self.win.iconbitmap('add_q.ico')
+        # This function is not supported on School laptop, so have to remove it
+        # self.win.iconbitmap('add_q.ico')
         # Create a menu bar with author info
         self.menu_bar = Menu(self.win)
         self.win.config(menu=self.menu_bar)
+        self.sys_menu = Menu(self.menu_bar, tearoff=0)
+        self.sys_menu.add_command(label='Go to question operation Unit', command=self.goto_op)
+        self.sys_menu.add_command(label='Return to Index', command=self.goto_index)
+        self.menu_bar.add_cascade(label='System', menu=self.sys_menu)
         self.help_menu = Menu(self.menu_bar, tearoff=0)
         self.help_menu.add_command(label='About', command=self._about_msg)
         self.menu_bar.add_cascade(label='Help', menu=self.help_menu)
@@ -188,7 +197,7 @@ class GUI:
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team 8 - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 1.4\n'
+                                             'Version 1.5\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -354,6 +363,8 @@ class GUI:
                 self.mc_reader = csv.reader(mc_csv)
                 for row in self.mc_reader:
                     self.mc_import_ls.append(row)
+                # delete the head of table
+                del (self.mc_import_ls[0])
         # if the filename ends with txt then use 'readlines' to read the data
         elif self.mc_ask_open_file[-3:] == 'txt':
             with open(self.mc_ask_open_file, 'r') as mc_txt:
@@ -367,6 +378,8 @@ class GUI:
                     gen_tuple = tuple(str_to_ls)
                     # append to the list to proceed
                     self.mc_import_ls.append(gen_tuple)
+                # delete head row of the table afterward
+                del (self.mc_import_ls[0])
         elif not self.mc_ask_open_file:
             # if no file chosen
             msg.showinfo('No file chosen', 'Please choose a csv or txt file to proceed.')
@@ -409,6 +422,8 @@ class GUI:
                 self.tf_reader = csv.reader(tf_csv)
                 for row in self.tf_reader:
                     self.tf_import_ls.append(row)
+                # delete head row of the table afterward
+                del (self.tf_import_ls[0])
         elif self.tf_ask_open_file[-3:] == 'txt':
             with open(self.tf_ask_open_file, 'r') as tf_txt:
                 self.tf_txt_data = tf_txt.readlines()
@@ -417,6 +432,8 @@ class GUI:
                     str_to_ls_2 = new_line_2.split(',')
                     gen_tuple_2 = tuple(str_to_ls_2)
                     self.tf_import_ls.append(gen_tuple_2)
+                # delete head row of the table afterward
+                del (self.tf_import_ls[0])
         elif not self.tf_ask_open_file:
             msg.showinfo('No file chosen', 'Please choose a csv or txt file to proceed.')
         else:
@@ -444,6 +461,23 @@ class GUI:
             self.tf_file_path['text'] = 'File opened: '
             msg.showinfo('Success', 'Question imported successfully!')
 
+    # Quit current GUI
+    def quit(self):
+        self.win.destroy()
 
-gui = GUI()
-gui.win.mainloop()
+    # Function to connect to next Unit
+    def goto_op(self):
+        self.quit()
+        self.unit1 = unit2.GUI()
+        self.win.mainloop()
+
+    # Function to return to last interface
+    def goto_index(self):
+        self.quit()
+        self.unit1 = unit0.GUI()
+        self.win.mainloop()
+
+
+if __name__ == "__main__":
+    gui = GUI()
+    gui.win.mainloop()
