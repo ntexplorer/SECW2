@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time : 2020/3/8 15:58
+# @Time : 2020/3/12 20:12
 # @Author : Tian ZHANG
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 2.0
+# @Version: 2.1
 
 # Imports
 import csv
@@ -26,7 +26,7 @@ class GUI:
         # Create instance
         self.win = tk.Tk()
         # Add a title
-        self.win.title('Add Questions - Quiz System by Team 8')
+        self.win.title('Add Questions - Quiz System by Team G')
         # Change the icon
         # This function is not supported on School laptop, so have to remove it
         # self.win.iconbitmap('add_q.ico')
@@ -136,7 +136,7 @@ class GUI:
         self.tf_question = tk.StringVar()
         self.tf_entered = ttk.Entry(self.record_q, width=50, textvariable=self.tf_question)
         self.tf_entered.grid(column=0, row=1, sticky='W', columnspan=2)
-        self.tf_correct_text = ttk.Label(self.record_q, text='Choose the correct selection:')
+        self.tf_correct_text = ttk.Label(self.record_q, text='Choose the correct answer:')
         self.tf_correct_text.grid(column=0, row=2, sticky="W")
         # Using 2 radio buttons for True and False selection
         self.tf_answer = tk.IntVar()
@@ -170,7 +170,7 @@ class GUI:
         self.mc_imp_btn = ttk.Button(self.import_mc_labelframe, width=30, text='Import Multiple Choice data file',
                                      command=self.mc_file_import)
         self.mc_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
-        self.mc_file_path = ttk.Label(self.import_mc_labelframe, width=55, text='File opened: ')
+        self.mc_file_path = ttk.Label(self.import_mc_labelframe, width=55, wraplength=380, text='File opened: ')
         self.mc_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
         # Generate button to transfer the data into db file
         self.mc_gen_imp_btn = ttk.Button(self.import_mc_labelframe, width=30, text='Import Questions!',
@@ -188,7 +188,7 @@ class GUI:
         self.tf_imp_btn = ttk.Button(self.import_tf_labelframe, width=30, text='Import True or False data file',
                                      command=self.tf_file_import)
         self.tf_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
-        self.tf_file_path = ttk.Label(self.import_tf_labelframe, width=55, text='File opened: ')
+        self.tf_file_path = ttk.Label(self.import_tf_labelframe, width=55, wraplength=380, text='File opened: ')
         self.tf_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
         self.tf_gen_imp_btn = ttk.Button(self.import_tf_labelframe, width=30, text='Import Questions!',
                                          command=self.gen_tf_db_imp)
@@ -234,7 +234,8 @@ class GUI:
                                  "Wrong Answer 2:\n"
                                  "Wrong Answer 3:")
         # Create a label to display single piece of data
-        self.mc_display_data = ttk.Label(self.display_mc_labelframe, width=55, textvariable=self.mc_display_text)
+        self.mc_display_data = ttk.Label(self.display_mc_labelframe, width=55, wraplength=380,
+                                         textvariable=self.mc_display_text)
         self.mc_display_data.grid(column=0, row=2, padx=8, pady=5)
 
         # Create a tree element for tf table
@@ -259,7 +260,8 @@ class GUI:
                                  "Difficulty:\n"
                                  "Correct Answer:")
         # Create a label to display single piece of data
-        self.tf_display_data = ttk.Label(self.display_tf_labelframe, width=55, textvariable=self.tf_display_text)
+        self.tf_display_data = ttk.Label(self.display_tf_labelframe, width=55, wraplength=380,
+                                         textvariable=self.tf_display_text)
         self.tf_display_data.grid(column=0, row=2, padx=8, pady=5)
 
     # ====================== End of display tab ========================
@@ -267,8 +269,8 @@ class GUI:
     @staticmethod
     # Pop up message box of About info
     def _about_msg():
-        msg.showinfo('Team 8 - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 2.0\n'
+        msg.showinfo('Team G - Portfolio B', 'Unit 1 - Add Question\n'
+                                             'Version 2.1\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -587,7 +589,9 @@ class GUI:
         self.tf_data = self.get_tf_data()
         i = 0
         for data in self.tf_data:
+            # transfer tuple to list
             data_ls = list(data)
+            # if value is 1 set it to True, otherwise set to False
             if data_ls[4] == 1:
                 data_ls[4] = "True"
             else:
@@ -627,3 +631,6 @@ class GUI:
 if __name__ == "__main__":
     gui = GUI()
     gui.win.mainloop()
+
+# TODO update test case
+# TODO record anther demo
