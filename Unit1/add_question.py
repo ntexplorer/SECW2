@@ -5,7 +5,7 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 1.5
+# @Version: 2.0
 
 # Imports
 import csv
@@ -42,12 +42,14 @@ class GUI:
         self.menu_bar.add_cascade(label='Help', menu=self.help_menu)
         # Create tab control
         self.tab_control = ttk.Notebook(self.win)
-        # Create 2 tabs
+        # Create 3 tabs
         self.record_tab = ttk.Frame(self.tab_control)
         self.import_tab = ttk.Frame(self.tab_control)
+        self.display_tab = ttk.Frame(self.tab_control)
         # Make the tabs visible
         self.tab_control.add(self.record_tab, text='Record manually')
         self.tab_control.add(self.import_tab, text='Import from file')
+        self.tab_control.add(self.display_tab, text='Question display')
         #  Pack to make visible
         self.tab_control.pack(expand=1, fill='both')
 
@@ -194,11 +196,27 @@ class GUI:
         self.tf_import_ls = []
         # ====================== End of import tab ========================
 
+        # ====================== Element for display tab ========================
+        # Create 2 labelframes for table display
+        self.display_mc_labelframe = ttk.LabelFrame(self.display_tab, text='Current Multiple Choice questions')
+        self.display_mc_labelframe.grid(column=0, row=0, padx=10, pady=8)
+        self.display_tf_labelframe = ttk.LabelFrame(self.display_tab, text='Current True or False questions')
+        self.display_tf_labelframe.grid(column=0, row=1, padx=10, pady=8)
+        # 2 buttons to generate latest question data
+        self.display_mc_btn = ttk.Button(self.display_mc_labelframe, text='Display Multiple Choice questions',
+                                         command=self.display_mc)
+        self.display_mc_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
+        self.display_tf_btn = ttk.Button(self.display_tf_labelframe, text='Display True or False questions',
+                                         command=self.display_tf)
+        self.display_tf_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
+
+    # ====================== End of display tab ========================
+
     @staticmethod
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team 8 - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 1.5\n'
+                                             'Version 2.0\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -461,6 +479,33 @@ class GUI:
             self.tf_ask_open_file = ''
             self.tf_file_path['text'] = 'File opened: '
             msg.showinfo('Success', 'Question imported successfully!')
+
+    # ====================== End of function for import tab ========================
+
+    # ====================== Function for display tab ========================
+    def get_mc_data(self, database="mc_question.db"):
+        self.conn = sqlite3.connect(database)
+        self.c = self.conn.cursor()
+        self.c.execute("SELECT * FROM MC_QUESTION ORDER BY PID")
+        self.mc_data_ls = self.c.fetchall()
+        self.conn.commit()
+        self.conn.close()
+        return self.mc_data_ls
+
+    def display_mc(self):
+        self.mc_tree = ttk.Treeview(self.display_mc_labelframe)
+        self.mc_tree["columns"] = ("Question", "Category", "Difficulty", "Correct Answer", "Wrong 1",
+                                   "Wrong 2", "Wrong 3")
+        for i in self.mc_tree["columns"]:
+            self.mc_tree.column(i, width=100)
+            self.mc_tree.heading(i, text=i)
+            self.a = self.get_mc_data()
+            print(self.a)
+
+    def display_tf(self):
+        pass
+
+    # ====================== End of function for display tab ========================
 
     # Quit current GUI
     def quit(self):
