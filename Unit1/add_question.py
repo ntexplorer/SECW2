@@ -197,7 +197,7 @@ class GUI:
         # ====================== End of import tab ========================
 
         # ====================== Element for display tab ========================
-        # Create 2 labelframes for table display
+        # Create 2 labelFrame for table display
         self.display_mc_labelframe = ttk.LabelFrame(self.display_tab, text='Current Multiple Choice questions')
         self.display_mc_labelframe.grid(column=0, row=0, padx=10, pady=8)
         self.display_tf_labelframe = ttk.LabelFrame(self.display_tab, text='Current True or False questions')
@@ -209,6 +209,58 @@ class GUI:
         self.display_tf_btn = ttk.Button(self.display_tf_labelframe, text='Display True or False questions',
                                          command=self.display_tf)
         self.display_tf_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
+        # Create a tree element for mc table
+        self.mc_tree = ttk.Treeview(self.display_mc_labelframe, height=5, show="headings", selectmode="browse")
+        self.mc_tree.grid(column=0, row=1, padx=8, pady=5)
+        # Setting columns for mc_tree
+        self.mc_tree["columns"] = ("PID", "QST", "CTG", "DFC", "CA", "WA1", "WA2", "WA3")
+        for i in self.mc_tree["columns"]:
+            self.mc_tree.column(i, width=50, anchor='center')
+            self.mc_tree.heading(i, text=i)
+        # Creating a scrollbar for viewing table
+        self.mc_vbar = ttk.Scrollbar(self.display_mc_labelframe, orient="vertical", command=self.mc_tree.yview)
+        self.mc_vbar.grid(column=1, row=1, sticky="NS")
+        self.mc_tree.configure(yscrollcommand=self.mc_vbar.set)
+        # Binding left click with showing data
+        self.mc_tree.bind("<ButtonRelease-1>", self.mc_click_view)
+        self.mc_display_text = tk.StringVar()
+        self.mc_display_text.set("Data selected:\n"
+                                 "PID:\n"
+                                 "Question:\n"
+                                 "Category:\n"
+                                 "Difficulty:\n"
+                                 "Correct Answer:\n"
+                                 "Wrong Answer 1:\n"
+                                 "Wrong Answer 2:\n"
+                                 "Wrong Answer 3:")
+        # Create a label to display single piece of data
+        self.mc_display_data = ttk.Label(self.display_mc_labelframe, width=55, textvariable=self.mc_display_text)
+        self.mc_display_data.grid(column=0, row=2, padx=8, pady=5)
+
+        # Create a tree element for tf table
+        self.tf_tree = ttk.Treeview(self.display_tf_labelframe, height=5, show="headings", selectmode="browse")
+        self.tf_tree.grid(column=0, row=1, padx=8, pady=5)
+        # Setting columns for tf_tree
+        self.tf_tree["columns"] = ("PID", "QST", "CTG", "DFC", "CA")
+        for i in self.tf_tree["columns"]:
+            self.tf_tree.column(i, width=70, anchor='center')
+            self.tf_tree.heading(i, text=i)
+        # Creating a scrollbar for viewing table
+        self.tf_vbar = ttk.Scrollbar(self.display_tf_labelframe, orient="vertical", command=self.tf_tree.yview)
+        self.tf_vbar.grid(column=1, row=1, sticky="NS")
+        self.tf_tree.configure(yscrollcommand=self.tf_vbar.set)
+        # Binding left click with showing data
+        self.tf_tree.bind("<ButtonRelease-1>", self.tf_click_view)
+        self.tf_display_text = tk.StringVar()
+        self.tf_display_text.set("Data selected:\n"
+                                 "PID:\n"
+                                 "Question:\n"
+                                 "Category:\n"
+                                 "Difficulty:\n"
+                                 "Correct Answer:")
+        # Create a label to display single piece of data
+        self.tf_display_data = ttk.Label(self.display_tf_labelframe, width=55, textvariable=self.tf_display_text)
+        self.tf_display_data.grid(column=0, row=2, padx=8, pady=5)
 
     # ====================== End of display tab ========================
 
@@ -327,7 +379,7 @@ class GUI:
             Otherwise it can't generate for a second time cause the cursor is closed!
             So can't move it to __init__.
             '''
-            self.conn = sqlite3.connect("mc_question.db")
+            self.conn = sqlite3.connect("system.db")
             self.c = self.conn.cursor()
             self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
@@ -356,7 +408,7 @@ class GUI:
             Otherwise it can't generate for a second time cause the cursor is closed!
             So can't move it to __init__.
             '''
-            self.conn = sqlite3.connect("tf_question.db")
+            self.conn = sqlite3.connect("system.db")
             self.c = self.conn.cursor()
             self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
@@ -414,7 +466,7 @@ class GUI:
             msg.showerror('Error', 'No data imported!\nPlease try again.')
         else:
             # Initialize mc_question database with sqlite3
-            self.conn = sqlite3.connect("mc_question.db")
+            self.conn = sqlite3.connect("system.db")
             self.c = self.conn.cursor()
             self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
@@ -465,7 +517,7 @@ class GUI:
             msg.showerror('Error', 'No data imported!\nPlease try again.')
         else:
             # Initialize mc_question database with sqlite3
-            self.conn = sqlite3.connect("tf_question.db")
+            self.conn = sqlite3.connect("system.db")
             self.c = self.conn.cursor()
             self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
@@ -483,7 +535,9 @@ class GUI:
     # ====================== End of function for import tab ========================
 
     # ====================== Function for display tab ========================
-    def get_mc_data(self, database="mc_question.db"):
+    def get_mc_data(self, database="system.db"):
+        # Empty the list every time retrieve data
+        self.mc_data_ls = []
         self.conn = sqlite3.connect(database)
         self.c = self.conn.cursor()
         self.c.execute("SELECT * FROM MC_QUESTION ORDER BY PID")
@@ -493,17 +547,63 @@ class GUI:
         return self.mc_data_ls
 
     def display_mc(self):
-        self.mc_tree = ttk.Treeview(self.display_mc_labelframe)
-        self.mc_tree["columns"] = ("Question", "Category", "Difficulty", "Correct Answer", "Wrong 1",
-                                   "Wrong 2", "Wrong 3")
-        for i in self.mc_tree["columns"]:
-            self.mc_tree.column(i, width=100)
-            self.mc_tree.heading(i, text=i)
-            self.a = self.get_mc_data()
-            print(self.a)
+        # Empty the table evert time user click the button
+        for i in self.mc_tree.get_children():
+            self.mc_tree.delete(i)
+        self.mc_data = self.get_mc_data()
+        i = 0
+        # insert the data
+        for data in self.mc_data:
+            self.mc_tree.insert('', i, values=data)
+            i += 1
+
+    def mc_click_view(self, event):
+        # get the item selected
+        for item in self.mc_tree.selection():
+            self.item_text = self.mc_tree.item(item, "values")
+        self.mc_display_text.set("Data selected:"
+                                 "\nPID: " + self.item_text[0] +
+                                 "\nQuestion: " + self.item_text[1] +
+                                 "\nCategory: " + self.item_text[2] +
+                                 "\nDifficulty: " + self.item_text[3] +
+                                 "\nCorrect Answer: " + self.item_text[4] +
+                                 "\nWrong Answer 1: " + self.item_text[5] +
+                                 "\nWrong Answer 2: " + self.item_text[6] +
+                                 "\nWrong Answer 3: " + self.item_text[7])
+
+    def get_tf_data(self, database="system.db"):
+        self.tf_data_ls = []
+        self.conn = sqlite3.connect(database)
+        self.c = self.conn.cursor()
+        self.c.execute("SELECT * FROM TF_QUESTION ORDER BY PID")
+        self.tf_data_ls = self.c.fetchall()
+        self.conn.commit()
+        self.conn.close()
+        return self.tf_data_ls
 
     def display_tf(self):
-        pass
+        for i in self.tf_tree.get_children():
+            self.tf_tree.delete(i)
+        self.tf_data = self.get_tf_data()
+        i = 0
+        for data in self.tf_data:
+            data_ls = list(data)
+            if data_ls[4] == 1:
+                data_ls[4] = "True"
+            else:
+                data_ls[4] = "False"
+            self.tf_tree.insert('', i, values=data_ls)
+            i += 1
+
+    def tf_click_view(self, event):
+        for item in self.tf_tree.selection():
+            self.item_text = list(self.tf_tree.item(item, "values"))
+        self.tf_display_text.set("Data selected:"
+                                 "\nPID: " + self.item_text[0] +
+                                 "\nQuestion: " + self.item_text[1] +
+                                 "\nCategory: " + self.item_text[2] +
+                                 "\nDifficulty: " + self.item_text[3] +
+                                 "\nCorrect Answer: " + self.item_text[4])
 
     # ====================== End of function for display tab ========================
 
