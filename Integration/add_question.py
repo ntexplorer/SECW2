@@ -11,6 +11,7 @@
 import csv
 import sqlite3
 import tkinter as tk
+from random import randint
 from time import sleep
 from tkinter import Menu
 from tkinter import filedialog
@@ -494,9 +495,10 @@ class GUI:
             self.conn.close()
             # progress bar go up
             self.mc_progress_bar['maximum'] = 100
-            for i in range(101):
-                sleep(0.01)
-                self.mc_progress_bar['value'] = i
+            while self.mc_progress_bar['value'] < 100:
+                sleep(0.06)
+                bar_add = randint(1, 6)
+                self.mc_progress_bar['value'] += bar_add
                 self.mc_progress_bar.update()
             # show msg box as a feedback
             msg.showinfo('Success', 'Question imported successfully!')
@@ -551,10 +553,12 @@ class GUI:
             self.conn.close()
             # progress bar go up
             self.tf_progress_bar['maximum'] = 100
-            for i in range(101):
-                sleep(0.01)
-                self.tf_progress_bar['value'] = i
+            while self.tf_progress_bar['value'] < 100:
+                sleep(0.06)
+                bar_add = randint(1, 6)
+                self.tf_progress_bar['value'] += bar_add
                 self.tf_progress_bar.update()
+
             msg.showinfo('Success', 'Question imported successfully!')
             # Empty the list after importing
             self.tf_import_ls = []
