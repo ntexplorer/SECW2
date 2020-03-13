@@ -8,7 +8,6 @@
 # @Version: 1.1
 
 import tkinter as tk
-from time import sleep
 from tkinter import messagebox as msg
 from tkinter import ttk
 
@@ -39,19 +38,12 @@ class GUI:
         self.login_btn.grid(row=2, column=0, padx=8, pady=5, sticky="N")
         self.clear_btn = ttk.Button(self.login_lf, text='Clear', command=self.clear)
         self.clear_btn.grid(row=2, column=1, padx=8, pady=5, sticky="N")
-        self.progress_bar = ttk.Progressbar(self.login_lf, orient="horizontal", length=250, mode='determinate')
-        self.progress_bar.grid(column=0, row=3, columnspan=2)
 
     def login(self):
         self.username_entered = self.entry_username.get()
         self.password_entered = self.entry_password.get()
 
         if self.username_entered == "admin" and self.password_entered == "teamgrocks":
-            self.progress_bar['maximum'] = 100
-            for i in range(101):
-                sleep(0.01)
-                self.progress_bar['value'] = i
-                self.progress_bar.update()
             msg.showinfo("Success", "Welcome to the backstage system!")
             self.goto_next()
         else:

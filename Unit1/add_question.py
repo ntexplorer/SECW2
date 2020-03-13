@@ -5,12 +5,13 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 2.1
+# @Version: 2.2
 
 # Imports
 import csv
 import sqlite3
 import tkinter as tk
+from time import sleep
 from tkinter import Menu
 from tkinter import filedialog
 from tkinter import messagebox as msg
@@ -174,10 +175,15 @@ class GUI:
         self.mc_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
         self.mc_file_path = ttk.Label(self.import_mc_labelframe, width=55, wraplength=380, text='File opened: ')
         self.mc_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
+        # Create a progress bar for importing mc
+        self.mc_progress_bar = ttk.Progressbar(self.import_mc_labelframe, orient="horizontal", length=400,
+                                               mode='determinate')
+        self.mc_progress_bar.grid(column=0, row=2, padx=8, pady=5, sticky="W")
+
         # Generate button to transfer the data into db file
         self.mc_gen_imp_btn = ttk.Button(self.import_mc_labelframe, width=30, text='Import Questions!',
                                          command=self.gen_mc_db_imp)
-        self.mc_gen_imp_btn.grid(column=0, row=2, padx=8, pady=5, sticky="W")
+        self.mc_gen_imp_btn.grid(column=0, row=3, padx=8, pady=5, sticky="W")
         # Using a list to contain all pieces of question data
         # ** notice that every single piece must be a tuple to be recorded into a db file
         self.mc_import_ls = []
@@ -192,9 +198,15 @@ class GUI:
         self.tf_imp_btn.grid(column=0, row=0, padx=8, pady=5, sticky="W")
         self.tf_file_path = ttk.Label(self.import_tf_labelframe, width=55, wraplength=380, text='File opened: ')
         self.tf_file_path.grid(column=0, row=1, padx=8, pady=5, sticky="W")
+
+        # Create a progress bar for importing tf
+        self.tf_progress_bar = ttk.Progressbar(self.import_tf_labelframe, orient="horizontal", length=400,
+                                               mode='determinate')
+        self.tf_progress_bar.grid(column=0, row=2, padx=8, pady=5, sticky="W")
+
         self.tf_gen_imp_btn = ttk.Button(self.import_tf_labelframe, width=30, text='Import Questions!',
                                          command=self.gen_tf_db_imp)
-        self.tf_gen_imp_btn.grid(column=0, row=2, padx=8, pady=5, sticky="W")
+        self.tf_gen_imp_btn.grid(column=0, row=3, padx=8, pady=5, sticky="W")
         self.tf_import_ls = []
         # ====================== End of import tab ========================
 
@@ -272,7 +284,7 @@ class GUI:
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team G - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 2.1\n'
+                                             'Version 2.2\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -480,13 +492,20 @@ class GUI:
                                "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_import_ls)
             self.conn.commit()
             self.conn.close()
+            # progress bar go up
+            self.mc_progress_bar['maximum'] = 100
+            for i in range(101):
+                sleep(0.01)
+                self.mc_progress_bar['value'] = i
+                self.mc_progress_bar.update()
+            # show msg box as a feedback
+            msg.showinfo('Success', 'Question imported successfully!')
             # Empty the list after importing
             self.mc_import_ls = []
             # reset the path storage and display
             self.mc_ask_open_file = ''
             self.mc_file_path['text'] = 'File opened: '
-            # show msg box as a feedback
-            msg.showinfo('Success', 'Question imported successfully!')
+            self.mc_progress_bar['value'] = 0
 
     def tf_file_import(self):
         # see self.mc_file_import()
@@ -530,11 +549,18 @@ class GUI:
                                self.tf_import_ls)
             self.conn.commit()
             self.conn.close()
+            # progress bar go up
+            self.tf_progress_bar['maximum'] = 100
+            for i in range(101):
+                sleep(0.01)
+                self.tf_progress_bar['value'] = i
+                self.tf_progress_bar.update()
+            msg.showinfo('Success', 'Question imported successfully!')
             # Empty the list after importing
             self.tf_import_ls = []
             self.tf_ask_open_file = ''
             self.tf_file_path['text'] = 'File opened: '
-            msg.showinfo('Success', 'Question imported successfully!')
+            self.tf_progress_bar['value'] = 0
 
     # ====================== End of function for import tab ========================
 
