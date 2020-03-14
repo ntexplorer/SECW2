@@ -5,7 +5,7 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 2.2
+# @Version: 2.3
 
 # Imports
 import csv
@@ -285,7 +285,7 @@ class GUI:
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team G - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 2.2\n'
+                                             'Version 2.3\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -488,26 +488,40 @@ class GUI:
             self.c.execute('''CREATE TABLE IF NOT EXISTS MC_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
             WRONG1 TEXT NOT NULL, WRONG2 TEXT NOT NULL, WRONG3 TEXT NOT NULL)''')
-
-            self.c.executemany("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
-                               "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_import_ls)
-            self.conn.commit()
-            self.conn.close()
-            # progress bar go up
-            self.mc_progress_bar['maximum'] = 100
-            while self.mc_progress_bar['value'] < 100:
-                sleep(0.06)
-                bar_add = randint(1, 6)
-                self.mc_progress_bar['value'] += bar_add
-                self.mc_progress_bar.update()
-            # show msg box as a feedback
-            msg.showinfo('Success', 'Question imported successfully!')
-            # Empty the list after importing
-            self.mc_import_ls = []
-            # reset the path storage and display
-            self.mc_ask_open_file = ''
-            self.mc_file_path['text'] = 'File opened: '
-            self.mc_progress_bar['value'] = 0
+            try:
+                # try if the format of the data file fit, if so then insert the data into the db
+                self.c.executemany("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
+                                   "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_import_ls)
+                self.conn.commit()
+                self.conn.close()
+                # progress bar go up
+                self.mc_progress_bar['maximum'] = 100
+                # using a randint to make the progress bar look real
+                while self.mc_progress_bar['value'] < 100:
+                    sleep(0.05)
+                    bar_add = randint(1, 6)
+                    self.mc_progress_bar['value'] += bar_add
+                    self.mc_progress_bar.update()
+                # show msg box as a feedback
+                msg.showinfo('Success', 'Question imported successfully!')
+                # Empty the list after importing
+                self.mc_import_ls = []
+                # reset the path storage and display
+                self.mc_ask_open_file = ''
+                self.mc_file_path['text'] = 'File opened: '
+                self.mc_progress_bar['value'] = 0
+            except sqlite3.ProgrammingError:
+                # if the format does not fit then raise an error msg box
+                msg.showerror('Error', 'Wrong data format, choose the correct file and try again.')
+                # still needs to close the cursor
+                self.conn.commit()
+                self.conn.close()
+                # clean the data imported
+                self.mc_import_ls = []
+                # reset the path storage and display
+                self.mc_ask_open_file = ''
+                self.mc_file_path['text'] = 'File opened: '
+                self.mc_progress_bar['value'] = 0
 
     def tf_file_import(self):
         # see self.mc_file_import()
@@ -546,25 +560,39 @@ class GUI:
             self.c = self.conn.cursor()
             self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
-
-            self.c.executemany("INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
-                               self.tf_import_ls)
-            self.conn.commit()
-            self.conn.close()
-            # progress bar go up
-            self.tf_progress_bar['maximum'] = 100
-            while self.tf_progress_bar['value'] < 100:
-                sleep(0.06)
-                bar_add = randint(1, 6)
-                self.tf_progress_bar['value'] += bar_add
-                self.tf_progress_bar.update()
-
-            msg.showinfo('Success', 'Question imported successfully!')
-            # Empty the list after importing
-            self.tf_import_ls = []
-            self.tf_ask_open_file = ''
-            self.tf_file_path['text'] = 'File opened: '
-            self.tf_progress_bar['value'] = 0
+            try:
+                # If the format of the data file fit the code below then insert them into the db
+                self.c.executemany(
+                    "INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
+                    self.tf_import_ls)
+                self.conn.commit()
+                self.conn.close()
+                # progress bar go up
+                self.tf_progress_bar['maximum'] = 100
+                # Using random int to make it look more real
+                while self.tf_progress_bar['value'] < 100:
+                    sleep(0.05)
+                    bar_add = randint(1, 6)
+                    self.tf_progress_bar['value'] += bar_add
+                    self.tf_progress_bar.update()
+                # show msg box after importing
+                msg.showinfo('Success', 'Question imported successfully!')
+                # Empty the list after importing
+                self.tf_import_ls = []
+                self.tf_ask_open_file = ''
+                self.tf_file_path['text'] = 'File opened: '
+                self.tf_progress_bar['value'] = 0
+            except sqlite3.ProgrammingError:
+                # if format doesn't fit then raise a error box
+                msg.showerror('Error', 'Wrong data format, choose the correct file and try again.')
+                # still need to close the cursor
+                self.conn.commit()
+                self.conn.close()
+                # Empty the list after importing
+                self.tf_import_ls = []
+                self.tf_ask_open_file = ''
+                self.tf_file_path['text'] = 'File opened: '
+                self.tf_progress_bar['value'] = 0
 
     # ====================== End of function for import tab ========================
 
@@ -592,18 +620,25 @@ class GUI:
             i += 1
 
     def mc_click_view(self, event):
-        # get the item selected
-        for item in self.mc_tree.selection():
-            self.item_text = self.mc_tree.item(item, "values")
-        self.mc_display_text.set("Data selected:"
-                                 "\nPID: " + self.item_text[0] +
-                                 "\nQuestion: " + self.item_text[1] +
-                                 "\nCategory: " + self.item_text[2] +
-                                 "\nDifficulty: " + self.item_text[3] +
-                                 "\nCorrect Answer: " + self.item_text[4] +
-                                 "\nWrong Answer 1: " + self.item_text[5] +
-                                 "\nWrong Answer 2: " + self.item_text[6] +
-                                 "\nWrong Answer 3: " + self.item_text[7])
+        # try if any data in the table, get one item selected turns it into a list
+        try:
+            self.item_text = list(self.mc_tree.item(self.mc_tree.selection()[0], "values"))
+        except IndexError:
+            # if nothing in the table then it would raise a Index error, pass.
+            pass
+        else:
+            # if there's data in the table then select the data, turn it into a list, display it with the label
+            for item in self.mc_tree.selection():
+                self.item_text = self.mc_tree.item(item, "values")
+            self.mc_display_text.set("Data selected:"
+                                     "\nPID: " + self.item_text[0] +
+                                     "\nQuestion: " + self.item_text[1] +
+                                     "\nCategory: " + self.item_text[2] +
+                                     "\nDifficulty: " + self.item_text[3] +
+                                     "\nCorrect Answer: " + self.item_text[4] +
+                                     "\nWrong Answer 1: " + self.item_text[5] +
+                                     "\nWrong Answer 2: " + self.item_text[6] +
+                                     "\nWrong Answer 3: " + self.item_text[7])
 
     def get_tf_data(self, database="system.db"):
         self.tf_data_ls = []
@@ -632,14 +667,22 @@ class GUI:
             i += 1
 
     def tf_click_view(self, event):
-        for item in self.tf_tree.selection():
-            self.item_text = list(self.tf_tree.item(item, "values"))
-        self.tf_display_text.set("Data selected:"
-                                 "\nPID: " + self.item_text[0] +
-                                 "\nQuestion: " + self.item_text[1] +
-                                 "\nCategory: " + self.item_text[2] +
-                                 "\nDifficulty: " + self.item_text[3] +
-                                 "\nCorrect Answer: " + self.item_text[4])
+        # try if any data in the table, get one item selected turns it into a list
+        try:
+            self.item_text = list(self.tf_tree.item(self.tf_tree.selection()[0], "values"))
+        except IndexError:
+            # if nothing in the table then it would raise a Index error, pass.
+            pass
+        else:
+            # if there's data in the table then select the data, turn it into a list, display it with the label
+            for item in self.tf_tree.selection():
+                self.item_text = list(self.tf_tree.item(item, "values"))
+            self.tf_display_text.set("Data selected:"
+                                     "\nPID: " + self.item_text[0] +
+                                     "\nQuestion: " + self.item_text[1] +
+                                     "\nCategory: " + self.item_text[2] +
+                                     "\nDifficulty: " + self.item_text[3] +
+                                     "\nCorrect Answer: " + self.item_text[4])
 
     # ====================== End of function for display tab ========================
 
@@ -664,4 +707,3 @@ class GUI:
 if __name__ == "__main__":
     gui = GUI()
     gui.win.mainloop()
-
