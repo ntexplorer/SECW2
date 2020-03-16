@@ -5,7 +5,7 @@
 # @Site : 
 # @File : add_question.py
 # @Software: PyCharm
-# @Version: 2.3
+# @Version: 2.4
 
 # Imports
 import csv
@@ -285,7 +285,7 @@ class GUI:
     # Pop up message box of About info
     def _about_msg():
         msg.showinfo('Team G - Portfolio B', 'Unit 1 - Add Question\n'
-                                             'Version 2.3\n'
+                                             'Version 2.4\n'
                                              'Unit created by Tian ZHANG.')
 
     # ====================== Function for record tab ========================
@@ -489,14 +489,16 @@ class GUI:
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT TEXT NOT NULL,
             WRONG1 TEXT NOT NULL, WRONG2 TEXT NOT NULL, WRONG3 TEXT NOT NULL)''')
             try:
+                # try if the format of the data file fit, if so then insert the data into the db
                 self.c.executemany("INSERT INTO MC_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT, WRONG1,"
                                    "WRONG2, WRONG3) VALUES (?, ?, ?, ?, ?, ?, ?)", self.mc_import_ls)
                 self.conn.commit()
                 self.conn.close()
                 # progress bar go up
                 self.mc_progress_bar['maximum'] = 100
+                # using a randint to make the progress bar look real
                 while self.mc_progress_bar['value'] < 100:
-                    sleep(0.06)
+                    sleep(0.05)
                     bar_add = randint(1, 6)
                     self.mc_progress_bar['value'] += bar_add
                     self.mc_progress_bar.update()
@@ -509,9 +511,12 @@ class GUI:
                 self.mc_file_path['text'] = 'File opened: '
                 self.mc_progress_bar['value'] = 0
             except sqlite3.ProgrammingError:
+                # if the format does not fit then raise an error msg box
                 msg.showerror('Error', 'Wrong data format, choose the correct file and try again.')
+                # still needs to close the cursor
                 self.conn.commit()
                 self.conn.close()
+                # clean the data imported
                 self.mc_import_ls = []
                 # reset the path storage and display
                 self.mc_ask_open_file = ''
@@ -556,6 +561,7 @@ class GUI:
             self.c.execute('''CREATE TABLE IF NOT EXISTS TF_QUESTION (PID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
             QUESTION TEXT NOT NULL, CATEGORY TEXT NOT NULL, DIFFICULTY TEXT NOT NULL, CORRECT INTEGER NOT NULL)''')
             try:
+                # If the format of the data file fit the code below then insert them into the db
                 self.c.executemany(
                     "INSERT INTO TF_QUESTION (QUESTION, CATEGORY, DIFFICULTY, CORRECT) VALUES (?, ?, ?, ?)",
                     self.tf_import_ls)
@@ -563,11 +569,13 @@ class GUI:
                 self.conn.close()
                 # progress bar go up
                 self.tf_progress_bar['maximum'] = 100
+                # Using random int to make it look more real
                 while self.tf_progress_bar['value'] < 100:
-                    sleep(0.06)
+                    sleep(0.05)
                     bar_add = randint(1, 6)
                     self.tf_progress_bar['value'] += bar_add
                     self.tf_progress_bar.update()
+                # show msg box after importing
                 msg.showinfo('Success', 'Question imported successfully!')
                 # Empty the list after importing
                 self.tf_import_ls = []
@@ -575,7 +583,9 @@ class GUI:
                 self.tf_file_path['text'] = 'File opened: '
                 self.tf_progress_bar['value'] = 0
             except sqlite3.ProgrammingError:
+                # if format doesn't fit then raise a error box
                 msg.showerror('Error', 'Wrong data format, choose the correct file and try again.')
+                # still need to close the cursor
                 self.conn.commit()
                 self.conn.close()
                 # Empty the list after importing
@@ -602,12 +612,20 @@ class GUI:
         # Empty the table evert time user click the button
         for i in self.mc_tree.get_children():
             self.mc_tree.delete(i)
-        self.mc_data = self.get_mc_data()
-        i = 0
-        # insert the data
-        for data in self.mc_data:
-            self.mc_tree.insert('', i, values=data)
-            i += 1
+        try:
+            # try if database exist and questions recorded, if so insert it into the table
+            self.mc_data = self.get_mc_data()
+            i = 0
+            # insert the data
+            for data in self.mc_data:
+                self.mc_tree.insert('', i, values=data)
+                i += 1
+        except sqlite3.OperationalError:
+            # db not exist, raise an error box
+            msg.showerror("Error", "No question found, please record questions first.")
+        except TypeError:
+            # no questions recorded, raise an error box
+            msg.showerror("Error", "No question found, please record questions first.")
 
     def mc_click_view(self, event):
         # try if any data in the table, get one item selected turns it into a list
@@ -643,18 +661,26 @@ class GUI:
     def display_tf(self):
         for i in self.tf_tree.get_children():
             self.tf_tree.delete(i)
-        self.tf_data = self.get_tf_data()
-        i = 0
-        for data in self.tf_data:
-            # transfer tuple to list
-            data_ls = list(data)
-            # if value is 1 set it to True, otherwise set to False
-            if data_ls[4] == 1:
-                data_ls[4] = "True"
-            else:
-                data_ls[4] = "False"
-            self.tf_tree.insert('', i, values=data_ls)
-            i += 1
+        try:
+            # try if db exists and questions are recorded,if so insert them into the table
+            self.tf_data = self.get_tf_data()
+            i = 0
+            for data in self.tf_data:
+                # transfer tuple to list
+                data_ls = list(data)
+                # if value is 1 set it to True, otherwise set to False
+                if data_ls[4] == 1:
+                    data_ls[4] = "True"
+                else:
+                    data_ls[4] = "False"
+                self.tf_tree.insert('', i, values=data_ls)
+                i += 1
+        except sqlite3.OperationalError:
+            # db not exist, create the db and raise an error box
+            msg.showerror("Error", "No question found, please record questions first.")
+        except TypeError:
+            # db exists but no questions recorded, raise an error box
+            msg.showerror("Error", "No question found, please record questions first.")
 
     def tf_click_view(self, event):
         # try if any data in the table, get one item selected turns it into a list
