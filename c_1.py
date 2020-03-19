@@ -219,6 +219,6 @@ class Questionnaire(Frame):
 
 root = Tk()
 root.title("Amend/Delete Questions")
-root.geometry("1000x500")
+root.geometry("1000x800")
 app = Questionnaire(root)
 root.mainloop()
