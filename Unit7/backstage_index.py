@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import add_question as unit1
+import homepage as home
 
 
 class GUI:
@@ -49,7 +50,9 @@ class GUI:
         pass
 
     def goto_unit4(self):
-        pass
+        self.quit()
+        self.back_home = home.Window()
+        self.win.mainloop()
 
 
 if __name__ == "__main__":

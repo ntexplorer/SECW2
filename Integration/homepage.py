@@ -3,35 +3,39 @@
 # Initially the pupil selects the type of quiz i.e. multiple choice or true/false
 # The system then randomly picks the questions from the database.
 
-import tkinter as tk
-from tkinter import ttk
-from tkinter import *
 import sqlite3
-import tkinter.font as tf
+import tkinter as tk
+from tkinter import *
 
-class Window(Frame):
+import login
 
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.master = master
+
+class Window:
+    def __init__(self):
+        self.root = tk.Tk()
+        # Add a title
+        self.root.title('Choose your quiz! by Team G')
+        self.root.geometry("600x400")
         self.question_radio = IntVar()
         self.init_window()
 
-    #the following function sets out the GUI layout. Radiobutton as been used for selection so that only one choice
+    # the following function sets out the GUI layout. Radiobutton as been used for selection so that only one choice
     # can be made to reduce potential errors.
 
     def init_window(self):
-        self.master.title("Choose your quiz!")
-        self.pack(fill=BOTH, expand=1)
-        Label(self, text = "Welcome to the Cardiff University Computer Science Quiz!").grid(row=0, padx = 8, pady = 20, sticky=W)
-        Label(self, text = "Please choose what type of quiz you would like:").grid(row=2, padx = 8, pady = 8, sticky=W)
-        Radiobutton(self, text= "True or False", value = 1, variable = self.question_radio).grid(row=4, padx = 8, pady = 8, sticky=W)
-        Radiobutton(self, text= "Multiple Choice", value = 2, variable = self.question_radio).grid(row=5, padx = 8, pady = 8, sticky=W)
-        self.button1 = Button(self, text="Submit choice", command= self.select_questions)
-        self.button1.grid(row=7, padx = 8, pady = 8, sticky=W)
-        self.label1 = Label(self, text= None)
+        Label(self.root, text="Welcome to the Cardiff University Computer Science Quiz!").grid(row=0, padx=8, pady=20,
+                                                                                               sticky=W)
+        Label(self.root, text="Please choose what type of quiz you would like:").grid(row=2, padx=8, pady=8, sticky=W)
+        Radiobutton(self.root, text="True or False", value=1, variable=self.question_radio).grid(row=4, padx=8, pady=8,
+                                                                                                 sticky=W)
+        Radiobutton(self.root, text="Multiple Choice", value=2, variable=self.question_radio).grid(row=5, padx=8,
+                                                                                                   pady=8, sticky=W)
+        self.button1 = Button(self.root, text="Submit choice", command=self.select_questions)
+        self.button1.grid(row=7, padx=8, pady=8, sticky=W)
+        self.label1 = Label(self.root, text=None)
         self.label1.grid(row=9, padx=8, pady=8, sticky=W)
-        Button(self, text="Back").grid(row=9, padx = 8, pady = 40, sticky=W)
+        self.login_btn = Button(self.root, text="Login as Admin", command=self.goto_login).grid(row=9, padx=8, pady=40,
+                                                                                                sticky=W)
 
     #The following fuction is called one the 'submit button is clicked'.
     #If True or False or Multiple choice is clicked then the button is then disabled so that multiple request to
@@ -80,12 +84,18 @@ class Window(Frame):
             else:
                 dict["correct_answer"] = "False"
             question_mockup.append(dict)
-        #print(question_mockup)
+        # print(question_mockup)
         return question_mockup
 
-root = Tk()
+    def quit(self):
+        self.root.destroy()
 
-root.geometry("600x400")
+    def goto_login(self):
+        self.quit()
+        self.back_login = login.GUI()
+        self.root.mainloop()
 
-app = Window(root)
-root.mainloop()
+
+if __name__ == "__main__":
+    app = Window()
+    app.root.mainloop()
