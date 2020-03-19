@@ -5,7 +5,7 @@
 # @Site : 
 # @File : backstage_index.py
 # @Software: PyCharm
-# @Version: 1.0
+# @Version: 1.1
 
 import tkinter as tk
 from tkinter import ttk
@@ -31,6 +31,8 @@ class GUI:
         self.goto_unit2_btn.grid(column=1, row=0, padx=10, pady=8, sticky="W")
         self.goto_unit3_btn = ttk.Button(self.index_lf, text='Manage Quiz', command=self.goto_unit3)
         self.goto_unit3_btn.grid(column=0, row=1, padx=10, pady=8, sticky="W")
+        self.goto_unit4_btn = ttk.Button(self.index_lf, text="Back to Homepage", command=self.goto_unit4)
+        self.goto_unit4_btn.grid(column=1, row=1, padx=10, pady=8, sticky="W")
 
     def quit(self):
         self.win.destroy()
@@ -44,6 +46,9 @@ class GUI:
         pass
 
     def goto_unit3(self):
+        pass
+
+    def goto_unit4(self):
         pass
 
 

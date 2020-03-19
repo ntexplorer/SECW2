@@ -5,7 +5,7 @@
 # @Site : 
 # @File : login.py
 # @Software: PyCharm
-# @Version: 1.1
+# @Version: 1.2
 
 import tkinter as tk
 from tkinter import messagebox as msg
@@ -26,18 +26,20 @@ class GUI:
         self.username_label.grid(column=0, row=0, padx=8, pady=5, sticky="W")
         self.username = tk.StringVar()
         self.entry_username = ttk.Entry(self.login_lf, textvariable=self.username)
-        self.entry_username.grid(row=0, column=1, sticky="W")
+        self.entry_username.grid(row=0, column=1, columnspan=2, sticky="W")
         self.entry_username.focus()
         self.password_label = ttk.Label(self.login_lf, text='Password:')
         self.password_label.grid(row=1, column=0, padx=8, pady=5, sticky="W")
         self.password = tk.StringVar()
         self.entry_password = ttk.Entry(self.login_lf, textvariable=self.password)
         self.entry_password["show"] = '*'
-        self.entry_password.grid(row=1, column=1, sticky="W")
+        self.entry_password.grid(row=1, column=1, columnspan=2, sticky="W")
         self.login_btn = ttk.Button(self.login_lf, text='Login', command=self.login)
         self.login_btn.grid(row=2, column=0, padx=8, pady=5, sticky="N")
         self.clear_btn = ttk.Button(self.login_lf, text='Clear', command=self.clear)
         self.clear_btn.grid(row=2, column=1, padx=8, pady=5, sticky="N")
+        self.back_btn = ttk.Button(self.login_lf, text='Back', command=self.back)
+        self.back_btn.grid(row=2, column=2, padx=8, pady=5, sticky="N")
 
     def login(self):
         self.username_entered = self.entry_username.get()
@@ -60,6 +62,9 @@ class GUI:
         self.quit()
         self.backstage_index = bkm.GUI()
         self.win.mainloop()
+
+    def back(self):
+        pass
 
 
 if __name__ == "__main__":
