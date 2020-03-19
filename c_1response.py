@@ -1,6 +1,7 @@
 
 class submitResponse:
-    def __init__(self, qID=0, radioVal=0):
+    def __init__(self, qID=0, radioValType=0, radioValOption=0):
 
         self.qID = qID
-        self.radioVal = radioVal
+        self.radioValType = radioValType
+        self.radioValOption = radioValOption
