@@ -34,7 +34,7 @@ class Window:
         self.button1.grid(row=7, padx=8, pady=8, sticky=W)
         self.label1 = Label(self.root, text=None)
         self.label1.grid(row=9, padx=8, pady=8, sticky=W)
-        self.login_btn = Button(self.root, text="Login as Admin", command=self.goto_login).grid(row=9, padx=8, pady=40,
+        self.login_btn = Button(self.root, text="Login as Admin", command=self.goto_login).grid(row=10, padx=8, pady=40,
                                                                                                 sticky=W)
 
     #The following fuction is called one the 'submit button is clicked'.
