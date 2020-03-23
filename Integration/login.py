@@ -12,7 +12,7 @@ from tkinter import messagebox as msg
 from tkinter import ttk
 
 import backstage_index as bkm
-import homepage as home
+import new_homepage as home
 
 
 class GUI:

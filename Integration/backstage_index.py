@@ -12,7 +12,7 @@ from tkinter import ttk
 
 import add_question as unit1
 import amend_delete_home as unit2
-import homepage as home
+import new_homepage as home
 
 
 class GUI:
@@ -57,7 +57,7 @@ class GUI:
 
     def goto_unit4(self):
         self.quit()
-        self.back_home = home.Window()
+        self.back_home = home.Homepage()
         self.win.mainloop()
 
 
