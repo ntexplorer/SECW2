@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import add_question as unit1
+import amend_delete_home as unit2
 import homepage as home
 
 
@@ -44,7 +45,12 @@ class GUI:
         self.win.mainloop()
 
     def goto_unit2(self):
-        pass
+        self.quit()
+        root = tk.Tk()
+        root.title("Amend/Delete Questions")
+        root.geometry("900x700")
+        app = unit2.amendDeleteQuestions(root)
+        root.mainloop()
 
     def goto_unit3(self):
         pass

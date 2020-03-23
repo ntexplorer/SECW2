@@ -1,8 +1,11 @@
-from tkinter import *
 import sqlite3
 import tkinter.messagebox
-from unit2ResponseClass import submitResponse
-from unit2AmendWindow import *
+from tkinter import *
+
+import backstage_index as bks
+from amend_window import *
+from u2_response_class import submitResponse
+
 
 # Main/Home Window Class
 
@@ -29,8 +32,8 @@ class amendDeleteQuestions(Frame):
         buttonSubmit['command']=self.storeResponse
         buttonSubmit.grid(row=12, column=1, columnspan=2, padx=10, pady=10)
 
-        buttonExit = Button(self, text='Exit', font=('Helvetica', 15), justify="center")
-        buttonExit['command']=self.closeWindow
+        buttonExit = Button(self, text='Back', font=('Helvetica', 15), justify="center")
+        buttonExit['command'] = self.closeWindow
         buttonExit.grid(row=13, column=1, columnspan=2, padx=10, pady=10)
 
         # Create scroll bar function; to show list of questions stored in system.db
@@ -266,15 +269,16 @@ class amendDeleteQuestions(Frame):
         # Close Main Window function
 
     def closeWindow(self):
-
         self.master.destroy()
+        app = bks.GUI()
+        app.win.mainloop()
 
 
 
 # Main
-
-root = Tk()
-root.title("Amend/Delete Questions")
-root.geometry("900x700")
-app = amendDeleteQuestions(root)
-root.mainloop()
+if __name__ == "__main__":
+    root = Tk()
+    root.title("Amend/Delete Questions")
+    root.geometry("900x700")
+    app = amendDeleteQuestions(root)
+    root.mainloop()

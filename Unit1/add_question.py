@@ -18,11 +18,10 @@ from tkinter import filedialog
 from tkinter import messagebox as msg
 from tkinter import ttk
 
-# Import template file for next and last GUI
+# import unit2
+import amend_delete_home as unit2
+# import index interface
 import backstage_index as index
-
-
-# import next_GUI_sample as unit2
 
 
 class GUI:
@@ -708,10 +707,12 @@ class GUI:
 
     # Function to connect to next Unit
     def goto_op(self):
-        # self.quit()
-        # self.unit1 = unit2.GUI()
-        # self.win.mainloop()
-        pass
+        self.quit()
+        root = tk.Tk()
+        root.title("Amend/Delete Questions")
+        root.geometry("900x700")
+        app = unit2.amendDeleteQuestions(root)
+        root.mainloop()
 
     # Function to return to last interface
     def goto_index(self):

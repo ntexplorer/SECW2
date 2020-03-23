@@ -1,7 +1,9 @@
-from tkinter import *
 import sqlite3
 import tkinter.messagebox
-from u2QuestionClass import *
+from tkinter import *
+
+from u2_question_class import *
+
 
 # Amend Window Class
 

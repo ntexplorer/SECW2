@@ -1,7 +1,9 @@
-from tkinter import *
 import sqlite3
 import tkinter.messagebox
-from unit2QuestionClass import *
+from tkinter import *
+
+from u2_question_class import *
+
 
 # Amend Window Class
 
@@ -264,66 +266,88 @@ class amendQuestion(Frame):
         self.outgoingQuestion.question = self.entQuestion.get()
         self.outgoingQuestion.answer = self.entCorrect.get()
 
-        if (self.outgoingQuestion.answer == "True"):
-            self.outgoingQuestion.answer = 1
+        # Check for valid difficulty input
 
-        if (self.outgoingQuestion.answer == "False"):
-            self.outgoingQuestion.answer = 0
+        if (self.outgoingQuestion.difficulty == "Easy" or
+                self.outgoingQuestion.difficulty == "Medium" or
+                self.outgoingQuestion.difficulty == "Hard"):
 
-        # If any inputs are left blank, present error message
+            # Convert TF answer to int values
 
-        if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
-        or self.entCorrect.get() == ""):
+            if (self.outgoingQuestion.answer == "True"):
+                self.outgoingQuestion.answer = 1
 
-            tkinter.messagebox.showwarning("Question Amend", "At least"
-            + " one attribute has been left empty" + ". Please ensure" +
-            " all attributes are filled in.",
-            parent=self)
+            if (self.outgoingQuestion.answer == "False"):
+                self.outgoingQuestion.answer = 0
 
-        else:
+            # Check for valid TF answer input
 
-            conn = sqlite3.connect('system.db')
-            c = conn.cursor ()
+            if (self.outgoingQuestion.answer == 0 or self.outgoingQuestion.answer == 1):
 
-            with conn:
-                cur = conn.execute('''SELECT * FROM TF_QUESTION''')
-                count = 0
-                for i in (cur.fetchall()):
-                    if (i[1] == self.outgoingQuestion.question and
-                    i[2] == self.outgoingQuestion.category and
-                    i[3] == self.outgoingQuestion.difficulty and
-                    i[4] == self.outgoingQuestion.answer):
+                # If any inputs are left blank, present error message
 
-                        count = count + 1
+                if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
+                        or self.entCorrect.get() == ""):
 
-                # If outgoingQuestion ID shares exactly the same attributes as other ID
-                # present error message
-
-                if (count > 0):
-
-                    tkinter.messagebox.showwarning("Question Amend", "A new ID"
-                    + " has not been created because an existing ID" +
-                    " was found with the exact same attributes.",
-                    parent=self)
-
-                # If outgoingQuestion passses criteria, insert into system.db
+                    tkinter.messagebox.showwarning("Question Amend", "At least"
+                                                   + " one attribute has been left empty" + ". Please ensure" +
+                                                   " all attributes are filled in.",
+                                                   parent=self)
 
                 else:
 
-                    cur = conn.execute('''INSERT INTO TF_QUESTION (PID, QUESTION,
-                    CATEGORY, DIFFICULTY, CORRECT) VALUES (?,?,?,?,
-                    ?)''', (self.outgoingQuestion.qID,
-                    self.outgoingQuestion.question,
-                    self.outgoingQuestion.category,
-                    self.outgoingQuestion.difficulty,
-                    self.outgoingQuestion.answer))
-                    conn.commit()
+                    conn = sqlite3.connect('system.db')
+                    c = conn.cursor()
 
-                    tkinter.messagebox.showinfo("Question Amend", "Amended"
-                    + " question added to database with ID: " + str(self.outgoingQuestion.qID),
-                    parent=self)
+                    with conn:
+                        cur = conn.execute('''SELECT * FROM TF_QUESTION''')
+                        count = 0
+                        for i in (cur.fetchall()):
+                            if (i[1] == self.outgoingQuestion.question and
+                                    i[2] == self.outgoingQuestion.category and
+                                    i[3] == self.outgoingQuestion.difficulty and
+                                    i[4] == self.outgoingQuestion.answer):
+                                count = count + 1
 
-                    self.closeWindow()
+                        # If outgoingQuestion ID shares exactly the same attributes as other ID
+                        # present error message
+
+                        if (count > 0):
+
+                            tkinter.messagebox.showwarning("Question Amend", "A new ID"
+                                                           + " has not been created because an existing ID" +
+                                                           " was found with the exact same attributes.",
+                                                           parent=self)
+
+                        # If outgoingQuestion passses criteria, insert into system.db
+
+                        else:
+
+                            cur = conn.execute('''INSERT INTO TF_QUESTION (PID, QUESTION,
+                            CATEGORY, DIFFICULTY, CORRECT) VALUES (?,?,?,?,
+                            ?)''', (self.outgoingQuestion.qID,
+                                    self.outgoingQuestion.question,
+                                    self.outgoingQuestion.category,
+                                    self.outgoingQuestion.difficulty,
+                                    self.outgoingQuestion.answer))
+                            conn.commit()
+
+                            tkinter.messagebox.showinfo("Question Amend", "Amended"
+                                                        + " question added to database with ID: " + str(
+                                self.outgoingQuestion.qID),
+                                                        parent=self)
+
+                            self.closeWindow()
+
+            else:
+                tkinter.messagebox.showwarning("Question Amend", "You may only"
+                                               + " enter 'True' or 'False' for the answer attribute",
+                                               parent=self)
+
+        else:
+            tkinter.messagebox.showwarning("Question Amend", "You may only"
+                                           + " enter 'Easy', 'Medium' or 'Hard' for the difficulty attribute",
+                                           parent=self)
 
         # Add outgoingQuestion (amended MC question) to system.db
 
@@ -340,69 +364,80 @@ class amendQuestion(Frame):
         self.outgoingQuestion.wrong2 = self.entWrong2.get()
         self.outgoingQuestion.wrong3 = self.entWrong3.get()
 
-        # If any inputs are left blank, present error message
+        # Check for valid difficulty input
 
-        if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
-        or self.entCorrect.get() == "" or self.entWrong1.get() == "" or
-        self.entWrong2.get() == "" or self.entWrong3.get() == ""):
+        if (self.outgoingQuestion.difficulty == "Easy" or
+                self.outgoingQuestion.difficulty == "Medium" or
+                self.outgoingQuestion.difficulty == "Hard"):
 
-            tkinter.messagebox.showwarning("Question Amend", "At least"
-            + " one attribute has been left empty" + ". Please ensure" +
-            " all attributes are filled in.",
-            parent=self)
+            # If any inputs are left blank, present error message
+
+            if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
+                    or self.entCorrect.get() == "" or self.entWrong1.get() == "" or
+                    self.entWrong2.get() == "" or self.entWrong3.get() == ""):
+
+                tkinter.messagebox.showwarning("Question Amend", "At least"
+                                               + " one attribute has been left empty" + ". Please ensure" +
+                                               " all attributes are filled in.",
+                                               parent=self)
+
+            else:
+
+                conn = sqlite3.connect('system.db')
+                c = conn.cursor()
+
+                with conn:
+                    cur = conn.execute('''SELECT * FROM MC_QUESTION''')
+                    count = 0
+                    for i in (cur.fetchall()):
+                        if (i[1] == self.outgoingQuestion.question and
+                                i[2] == self.outgoingQuestion.category and
+                                i[3] == self.outgoingQuestion.difficulty and
+                                i[4] == self.outgoingQuestion.correct and
+                                i[5] == self.outgoingQuestion.wrong1 and
+                                i[6] == self.outgoingQuestion.wrong2 and
+                                i[7] == self.outgoingQuestion.wrong3):
+                            count = count + 1
+
+                    # If outgoingQuestion ID shares exactly the same attributes as other ID
+                    # present error message
+
+                    if (count > 0):
+
+                        tkinter.messagebox.showwarning("Question Amend", "A new ID"
+                                                       + " has not been created because an existing ID" +
+                                                       " was found with the exact same attributes.",
+                                                       parent=self)
+
+                    # If outgoingQuestion passses criteria, insert into system.db
+
+                    else:
+
+                        cur = conn.execute('''INSERT INTO MC_QUESTION (PID, QUESTION,
+                        CATEGORY, DIFFICULTY, CORRECT, WRONG1, WRONG2,
+                        WRONG3) VALUES (?,?,?,?,
+                        ?,?,?,?)''', (self.outgoingQuestion.qID,
+                                      self.outgoingQuestion.question,
+                                      self.outgoingQuestion.category,
+                                      self.outgoingQuestion.difficulty,
+                                      self.outgoingQuestion.correct,
+                                      self.outgoingQuestion.wrong1,
+                                      self.outgoingQuestion.wrong2,
+                                      self.outgoingQuestion.wrong3))
+
+                        conn.commit()
+
+                        tkinter.messagebox.showinfo("Question Amend", "Amended"
+                                                    + " question added to database with ID: " + str(
+                            self.outgoingQuestion.qID),
+                                                    parent=self)
+
+                        self.closeWindow()
 
         else:
-
-            conn = sqlite3.connect('system.db')
-            c = conn.cursor ()
-
-            with conn:
-                cur = conn.execute('''SELECT * FROM MC_QUESTION''')
-                count = 0
-                for i in (cur.fetchall()):
-                    if (i[1] == self.outgoingQuestion.question and
-                    i[2] == self.outgoingQuestion.category and
-                    i[3] == self.outgoingQuestion.difficulty and
-                    i[4] == self.outgoingQuestion.correct and
-                    i[5] == self.outgoingQuestion.wrong1 and
-                    i[6] == self.outgoingQuestion.wrong2 and
-                    i[7] == self.outgoingQuestion.wrong3):
-
-                        count = count + 1
-
-                # If outgoingQuestion ID shares exactly the same attributes as other ID
-                # present error message
-
-                if (count > 0):
-
-                    tkinter.messagebox.showwarning("Question Amend", "A new ID"
-                    + " has not been created because an existing ID" +
-                    " was found with the exact same attributes.",
-                    parent=self)
-
-                # If outgoingQuestion passses criteria, insert into system.db
-
-                else:
-
-                    cur = conn.execute('''INSERT INTO MC_QUESTION (PID, QUESTION,
-                    CATEGORY, DIFFICULTY, CORRECT, WRONG1, WRONG2,
-                    WRONG3) VALUES (?,?,?,?,
-                    ?,?,?,?)''', (self.outgoingQuestion.qID,
-                    self.outgoingQuestion.question,
-                    self.outgoingQuestion.category,
-                    self.outgoingQuestion.difficulty,
-                    self.outgoingQuestion.correct,
-                    self.outgoingQuestion.wrong1,
-                    self.outgoingQuestion.wrong2,
-                    self.outgoingQuestion.wrong3))
-
-                    conn.commit()
-
-                    tkinter.messagebox.showinfo("Question Amend", "Amended"
-                    + " question added to database with ID: " + str(self.outgoingQuestion.qID),
-                    parent=self)
-
-                    self.closeWindow()
+            tkinter.messagebox.showwarning("Question Amend", "You may only"
+                                           + " enter 'Easy', 'Medium' or 'Hard' for the difficulty attribute",
+                                           parent=self)
 
     def closeWindow(self):
 
