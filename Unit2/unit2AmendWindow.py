@@ -3,11 +3,15 @@ import sqlite3
 import tkinter.messagebox
 from unit2QuestionClass import *
 
+# Amend Window Class
+
 class amendQuestion(Frame):
 
     def __init__(self, master):
 
         Frame.__init__(self, master)
+
+        # Upon class initialisation, retrieve shelved response
 
         import shelve
         db = shelve.open("responsedb")
@@ -21,6 +25,12 @@ class amendQuestion(Frame):
 
         idList = []
         self.newID = 0
+
+        # If response contained MC radio value
+        # question = instance of questionMCClass
+        # outgoingQuestion = instance of questionMCClass
+        # select MC ID (specified by response ID) from system.db
+        # iterate through attributes to create/update question class attributes
 
         if (self.Ans.radioValType == 1):
             self.question = questionMCClass()
@@ -41,8 +51,15 @@ class amendQuestion(Frame):
                 for i in (cur.fetchall()):
                     idList.append(i[0])
 
+            # newID (outgoingQuestion ID) will be highest existing MC ID + 1
+
             self.newID = max(idList) + 1
 
+        # If response contained TF radio value
+        # question = instance of questionTFClass
+        # outgoingQuestion = instance of questionTFClass
+        # select TF ID (specified by response ID) from system.db
+        # iterate through attributes to create/update question class attributes
 
         elif (self.Ans.radioValType == 2):
             self.question = questionTFClass()
@@ -60,11 +77,15 @@ class amendQuestion(Frame):
                 for i in (cur.fetchall()):
                     idList.append(i[0])
 
+            # newID (outgoingQuestion ID) will be highest existing TF ID + 1
+
             self.newID = max(idList) + 1
 
         conn.commit()
 
         self.grid()
+
+        # Different label/input setup upon initialisation depending on response type
 
         if (self.Ans.radioValType == 1):
             self.create_labelsMC()
@@ -74,6 +95,8 @@ class amendQuestion(Frame):
             self.create_inputsTF()
 
         self.create_buttons()
+
+        # Create buttons function
 
     def create_buttons(self):
 
@@ -90,10 +113,12 @@ class amendQuestion(Frame):
         elif (self.question.type == "True/ False"):
             buttonAmend['command']=self.addOutgoingTF
 
+        # Create MC labels function
+
     def create_labelsMC(self):
 
         lblInfo = Label (self, text="A list of details associated with the question ID specified previously are" +
-                        " summarised below.\n" "You may edit (or leave untouced) some of these details and amend/create a revised verison.\n" +
+                        " summarised below.\n" "You may edit (or leave untouched) some of these details and amend/create a revised verison.\n" +
                         " This can be added to the database by clicking the button below.\n" + "A new question ID will be generated, however "
                         + "the former ID will not be deleted.", font=("Helvetica", 10))
         lblInfo.grid(row=1, column=2, padx=10, pady=10)
@@ -128,6 +153,8 @@ class amendQuestion(Frame):
         lblWrongAnswer3 = Label(self, text="Wrong Answer 3:", font=("Helvetica", 12, "bold"))
         lblWrongAnswer3.grid(row=11, column=1, padx=10, pady=10)
 
+        # Create TF labels function
+
     def create_labelsTF(self):
 
         lblFormerID = Label(self, text="Former ID:", font=("Helvetica", 12, "bold"))
@@ -150,6 +177,8 @@ class amendQuestion(Frame):
 
         lblTFAnswer = Label(self, text="Answer:", font=("Helvetica", 12, "bold"))
         lblTFAnswer.grid(row=8, column=1, padx=10, pady=10)
+
+        # Create MC inputs function
 
     def create_inputsMC(self):
 
@@ -189,6 +218,8 @@ class amendQuestion(Frame):
         self.entWrong3.grid(row=11, column=2)
         self.entWrong3.insert(0, self.question.wrong3)
 
+        # Create TF inputs function
+
     def create_inputsTF(self):
 
         lblFQID = Label(self, text=str(self.question.qID), font=("Helvetica", 12))
@@ -221,7 +252,11 @@ class amendQuestion(Frame):
         self.entCorrect.grid(row=8, column=2)
         self.entCorrect.insert(0, self.question.answer)
 
+        # Add outgoingQuestion (amended TF question) to system.db
+
     def addOutgoingTF(self):
+
+        # Setting outgoingQuestion attribute values from inputs
 
         self.outgoingQuestion.qID = self.newID
         self.outgoingQuestion.category = self.question.category
@@ -234,6 +269,8 @@ class amendQuestion(Frame):
 
         if (self.outgoingQuestion.answer == "False"):
             self.outgoingQuestion.answer = 0
+
+        # If any inputs are left blank, present error message
 
         if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
         or self.entCorrect.get() == ""):
@@ -259,12 +296,17 @@ class amendQuestion(Frame):
 
                         count = count + 1
 
+                # If outgoingQuestion ID shares exactly the same attributes as other ID
+                # present error message
+
                 if (count > 0):
 
                     tkinter.messagebox.showwarning("Question Amend", "A new ID"
                     + " has not been created because an existing ID" +
                     " was found with the exact same attributes.",
                     parent=self)
+
+                # If outgoingQuestion passses criteria, insert into system.db
 
                 else:
 
@@ -283,7 +325,11 @@ class amendQuestion(Frame):
 
                     self.closeWindow()
 
+        # Add outgoingQuestion (amended MC question) to system.db
+
     def addOutgoingMC(self):
+
+        # Setting outgoingQuestion attribute values from inputs
 
         self.outgoingQuestion.qID = self.newID
         self.outgoingQuestion.category = self.question.category
@@ -293,6 +339,8 @@ class amendQuestion(Frame):
         self.outgoingQuestion.wrong1 = self.entWrong1.get()
         self.outgoingQuestion.wrong2 = self.entWrong2.get()
         self.outgoingQuestion.wrong3 = self.entWrong3.get()
+
+        # If any inputs are left blank, present error message
 
         if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
         or self.entCorrect.get() == "" or self.entWrong1.get() == "" or
@@ -322,12 +370,17 @@ class amendQuestion(Frame):
 
                         count = count + 1
 
+                # If outgoingQuestion ID shares exactly the same attributes as other ID
+                # present error message
+
                 if (count > 0):
 
                     tkinter.messagebox.showwarning("Question Amend", "A new ID"
                     + " has not been created because an existing ID" +
                     " was found with the exact same attributes.",
                     parent=self)
+
+                # If outgoingQuestion passses criteria, insert into system.db
 
                 else:
 
