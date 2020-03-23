@@ -1,4 +1,6 @@
 
+# Multiple Choice Queston Class
+
 class questionMCClass:
     def __init__(self, qID=0, category="", difficulty="", type="Multiple Choice", question="",
                  correct="", wrong1="", wrong2="", wrong3=""):
@@ -12,6 +14,8 @@ class questionMCClass:
         self.wrong1 = wrong1
         self.wrong2 = wrong2
         self.wrong3 = wrong3
+
+# True/ False Question Class
 
 class questionTFClass:
     def __init__(self, qID=0, category="", difficulty="", type="True/ False", question="",
