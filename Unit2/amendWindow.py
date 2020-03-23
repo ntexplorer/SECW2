@@ -1,0 +1,442 @@
+from tkinter import *
+import sqlite3
+import tkinter.messagebox
+from u2QuestionClass import *
+
+# Amend Window Class
+
+class amendQuestion(Frame):
+
+    def __init__(self, master):
+
+        Frame.__init__(self, master)
+
+        # Upon class initialisation, retrieve shelved response
+
+        import shelve
+        db = shelve.open("responsedb")
+        self.Ans = db["0"]
+        db.close()
+
+        conn = sqlite3.connect('system.db')
+        c = conn.cursor ()
+
+        qID = self.Ans.qID
+
+        idList = []
+        self.newID = 0
+
+        # If response contained MC radio value
+        # question = instance of questionMCClass
+        # outgoingQuestion = instance of questionMCClass
+        # select MC ID (specified by response ID) from system.db
+        # iterate through attributes to create/update question class attributes
+
+        if (self.Ans.radioValType == 1):
+            self.question = questionMCClass()
+            self.outgoingQuestion = questionMCClass()
+            with conn:
+                cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
+                for i in (cur.fetchall()):
+                    self.question.qID = i[0]
+                    self.question.question = (str(i[1]))
+                    self.question.category = (str(i[2]))
+                    self.question.difficulty = (str(i[3]))
+                    self.question.correct = (str(i[4]))
+                    self.question.wrong1 = (str(i[5]))
+                    self.question.wrong2 = (str(i[6]))
+                    self.question.wrong3 = (str(i[7]))
+
+                cur = conn.execute("SELECT PID FROM MC_QUESTION")
+                for i in (cur.fetchall()):
+                    idList.append(i[0])
+
+            # newID (outgoingQuestion ID) will be highest existing MC ID + 1
+
+            self.newID = max(idList) + 1
+
+        # If response contained TF radio value
+        # question = instance of questionTFClass
+        # outgoingQuestion = instance of questionTFClass
+        # select TF ID (specified by response ID) from system.db
+        # iterate through attributes to create/update question class attributes
+
+        elif (self.Ans.radioValType == 2):
+            self.question = questionTFClass()
+            self.outgoingQuestion = questionTFClass()
+            with conn:
+                cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
+                for i in (cur.fetchall()):
+                    self.question.qID = i[0]
+                    self.question.question = (str(i[1]))
+                    self.question.category = (str(i[2]))
+                    self.question.difficulty = (str(i[3]))
+                    self.question.answer = (str(i[4]))
+
+                cur = conn.execute("SELECT PID FROM TF_QUESTION")
+                for i in (cur.fetchall()):
+                    idList.append(i[0])
+
+            # newID (outgoingQuestion ID) will be highest existing TF ID + 1
+
+            self.newID = max(idList) + 1
+
+        conn.commit()
+
+        self.grid()
+
+        # Different label/input setup upon initialisation depending on response type
+
+        if (self.Ans.radioValType == 1):
+            self.create_labelsMC()
+            self.create_inputsMC()
+        if (self.Ans.radioValType == 2):
+            self.create_labelsTF()
+            self.create_inputsTF()
+
+        self.create_buttons()
+
+        # Create buttons function
+
+    def create_buttons(self):
+
+        buttonAmend = Button(self, text='Amend Question', font=('Helvetica', 15), justify="center")
+        buttonAmend.grid(row=13, column=2, padx=10, pady=10)
+
+        buttonExit = Button(self, text='Exit', font=('Helvetica', 15), justify="center")
+        buttonExit['command']=self.closeWindow
+        buttonExit.grid(row=14, column=2, padx=10, pady=10)
+
+        if (self.question.type == "Multiple Choice"):
+            buttonAmend['command']=self.addOutgoingMC
+
+        elif (self.question.type == "True/ False"):
+            buttonAmend['command']=self.addOutgoingTF
+
+        # Create MC labels function
+
+    def create_labelsMC(self):
+
+        lblInfo = Label (self, text="A list of details associated with the question ID specified previously are" +
+                        " summarised below.\n" "You may edit (or leave untouched) some of these details and amend/create a revised verison.\n" +
+                        " This can be added to the database by clicking the button below.\n" + "A new question ID will be generated, however "
+                        + "the former ID will not be deleted.", font=("Helvetica", 10))
+        lblInfo.grid(row=1, column=2, padx=10, pady=10)
+
+        lblFormerID = Label(self, text="Former ID:", font=("Helvetica", 12, "bold"))
+        lblFormerID.grid(row=2, column=1, padx=10, pady=10)
+
+        lblNewID = Label(self, text="New ID:", font=("Helvetica", 12, "bold"))
+        lblNewID.grid(row=3, column=1, padx=10, pady=10)
+
+        lblCategory = Label(self, text="Category:", font=("Helvetica", 12, "bold"))
+        lblCategory.grid(row=4, column=1, padx=10, pady=10)
+
+        lblType = Label(self, text="Question Type:", font=("Helvetica", 12, "bold"))
+        lblType.grid(row=5, column=1, padx=10, pady=10)
+
+        lblDifficulty = Label(self, text="Difficulty Level:", font=("Helvetica", 12, "bold"))
+        lblDifficulty.grid(row=6, column=1, padx=10, pady=10)
+
+        lblQuestion = Label(self, text="Question:", font=("Helvetica", 12, "bold"))
+        lblQuestion.grid(row=7, column=1, padx=10, pady=10)
+
+        lblCorrectAnswer = Label(self, text="Correct Answer:", font=("Helvetica", 12, "bold"))
+        lblCorrectAnswer.grid(row=8, column=1, padx=10, pady=10)
+
+        lblWrongAnswer1 = Label(self, text="Wrong Answer 1:", font=("Helvetica", 12, "bold"))
+        lblWrongAnswer1.grid(row=9, column=1, padx=10, pady=10)
+
+        lblWrongAnswer2 = Label(self, text="Wrong Answer 2:", font=("Helvetica", 12, "bold"))
+        lblWrongAnswer2.grid(row=10, column=1, padx=10, pady=10)
+
+        lblWrongAnswer3 = Label(self, text="Wrong Answer 3:", font=("Helvetica", 12, "bold"))
+        lblWrongAnswer3.grid(row=11, column=1, padx=10, pady=10)
+
+        # Create TF labels function
+
+    def create_labelsTF(self):
+
+        lblFormerID = Label(self, text="Former ID:", font=("Helvetica", 12, "bold"))
+        lblFormerID.grid(row=2, column=1, padx=10, pady=10)
+
+        lblNewID = Label(self, text="New ID:", font=("Helvetica", 12, "bold"))
+        lblNewID.grid(row=3, column=1, padx=10, pady=10)
+
+        lblCategory = Label(self, text="Category:", font=("Helvetica", 12, "bold"))
+        lblCategory.grid(row=4, column=1, padx=10, pady=10)
+
+        lblType = Label(self, text="Question Type:", font=("Helvetica", 12, "bold"))
+        lblType.grid(row=5, column=1, padx=10, pady=10)
+
+        lblDifficulty = Label(self, text="Difficulty Level:", font=("Helvetica", 12, "bold"))
+        lblDifficulty.grid(row=6, column=1, padx=10, pady=10)
+
+        lblQuestion = Label(self, text="Question:", font=("Helvetica", 12, "bold"))
+        lblQuestion.grid(row=7, column=1, padx=10, pady=10)
+
+        lblTFAnswer = Label(self, text="Answer:", font=("Helvetica", 12, "bold"))
+        lblTFAnswer.grid(row=8, column=1, padx=10, pady=10)
+
+        # Create MC inputs function
+
+    def create_inputsMC(self):
+
+        lblFQID = Label(self, text=str(self.question.qID), font=("Helvetica", 12))
+        lblFQID.grid(row=2, column=2, padx=10, pady=10)
+
+        lblNQID = Label(self, text=self.newID, font=("Helvetica", 12))
+        lblNQID.grid(row=3, column=2, padx=10, pady=10)
+
+        lblCI = Label(self, text=self.question.category, font=("Helvetica", 12))
+        lblCI.grid(row=4, column=2, padx=10, pady=10)
+
+        lblTI = Label(self, text=self.question.type, font=("Helvetica", 12))
+        lblTI.grid(row=5, column=2, padx=10, pady=10)
+
+        self.entDifficulty = Entry(self, width=100)
+        self.entDifficulty.grid(row=6, column=2)
+        self.entDifficulty.insert(0, self.question.difficulty)
+
+        self.entQuestion = Entry(self, width=100)
+        self.entQuestion.grid(row=7, column=2)
+        self.entQuestion.insert(0, self.question.question)
+
+        self.entCorrect = Entry(self, width=100)
+        self.entCorrect.grid(row=8, column=2)
+        self.entCorrect.insert(0, self.question.correct)
+
+        self.entWrong1 = Entry(self, width=100)
+        self.entWrong1.grid(row=9, column=2)
+        self.entWrong1.insert(0, self.question.wrong1)
+
+        self.entWrong2 = Entry(self, width=100)
+        self.entWrong2.grid(row=10, column=2)
+        self.entWrong2.insert(0, self.question.wrong2)
+
+        self.entWrong3 = Entry(self, width=100)
+        self.entWrong3.grid(row=11, column=2)
+        self.entWrong3.insert(0, self.question.wrong3)
+
+        # Create TF inputs function
+
+    def create_inputsTF(self):
+
+        lblFQID = Label(self, text=str(self.question.qID), font=("Helvetica", 12))
+        lblFQID.grid(row=2, column=2, padx=10, pady=10)
+
+        lblNQID = Label(self, text=self.newID, font=("Helvetica", 12))
+        lblNQID.grid(row=3, column=2, padx=10, pady=10)
+
+        lblCI = Label(self, text=self.question.category, font=("Helvetica", 12))
+        lblCI.grid(row=4, column=2, padx=10, pady=10)
+
+        lblTI = Label(self, text=self.question.type, font=("Helvetica", 12))
+        lblTI.grid(row=5, column=2, padx=10, pady=10)
+
+        self.entDifficulty = Entry(self, width=100)
+        self.entDifficulty.grid(row=6, column=2)
+        self.entDifficulty.insert(0, self.question.difficulty)
+
+        self.entQuestion = Entry(self, width=100)
+        self.entQuestion.grid(row=7, column=2)
+        self.entQuestion.insert(0, self.question.question)
+
+        if (self.question.answer == "1"):
+            self.question.answer = "True"
+
+        if (self.question.answer == "0"):
+            self.question.answer ="False"
+
+        self.entCorrect = Entry(self, width=100)
+        self.entCorrect.grid(row=8, column=2)
+        self.entCorrect.insert(0, self.question.answer)
+
+        # Add outgoingQuestion (amended TF question) to system.db
+
+    def addOutgoingTF(self):
+
+        # Setting outgoingQuestion attribute values from inputs
+
+        self.outgoingQuestion.qID = self.newID
+        self.outgoingQuestion.category = self.question.category
+        self.outgoingQuestion.difficulty = self.entDifficulty.get()
+        self.outgoingQuestion.question = self.entQuestion.get()
+        self.outgoingQuestion.answer = self.entCorrect.get()
+
+        # Check for valid difficulty input
+
+        if (self.outgoingQuestion.difficulty == "Easy" or
+            self.outgoingQuestion.difficulty == "Medium" or
+            self.outgoingQuestion.difficulty == "Hard"):
+
+            # Convert TF answer to int values
+
+            if (self.outgoingQuestion.answer == "True"):
+                self.outgoingQuestion.answer = 1
+
+            if (self.outgoingQuestion.answer == "False"):
+                self.outgoingQuestion.answer = 0
+
+            # Check for valid TF answer input
+
+            if (self.outgoingQuestion.answer == 0 or self.outgoingQuestion.answer == 1):
+
+            # If any inputs are left blank, present error message
+
+                if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
+                or self.entCorrect.get() == ""):
+
+                    tkinter.messagebox.showwarning("Question Amend", "At least"
+                    + " one attribute has been left empty" + ". Please ensure" +
+                    " all attributes are filled in.",
+                    parent=self)
+
+                else:
+
+                    conn = sqlite3.connect('system.db')
+                    c = conn.cursor ()
+
+                    with conn:
+                        cur = conn.execute('''SELECT * FROM TF_QUESTION''')
+                        count = 0
+                        for i in (cur.fetchall()):
+                            if (i[1] == self.outgoingQuestion.question and
+                            i[2] == self.outgoingQuestion.category and
+                            i[3] == self.outgoingQuestion.difficulty and
+                            i[4] == self.outgoingQuestion.answer):
+
+                                count = count + 1
+
+                        # If outgoingQuestion ID shares exactly the same attributes as other ID
+                        # present error message
+
+                        if (count > 0):
+
+                            tkinter.messagebox.showwarning("Question Amend", "A new ID"
+                            + " has not been created because an existing ID" +
+                            " was found with the exact same attributes.",
+                            parent=self)
+
+                        # If outgoingQuestion passses criteria, insert into system.db
+
+                        else:
+
+                            cur = conn.execute('''INSERT INTO TF_QUESTION (PID, QUESTION,
+                            CATEGORY, DIFFICULTY, CORRECT) VALUES (?,?,?,?,
+                            ?)''', (self.outgoingQuestion.qID,
+                            self.outgoingQuestion.question,
+                            self.outgoingQuestion.category,
+                            self.outgoingQuestion.difficulty,
+                            self.outgoingQuestion.answer))
+                            conn.commit()
+
+                            tkinter.messagebox.showinfo("Question Amend", "Amended"
+                            + " question added to database with ID: " + str(self.outgoingQuestion.qID),
+                            parent=self)
+
+                            self.closeWindow()
+
+            else:
+                tkinter.messagebox.showwarning("Question Amend", "You may only"
+                + " enter 'True' or 'False' for the answer attribute",
+                parent=self)
+
+        else:
+            tkinter.messagebox.showwarning("Question Amend", "You may only"
+            + " enter 'Easy', 'Medium' or 'Hard' for the difficulty attribute",
+            parent=self)
+
+        # Add outgoingQuestion (amended MC question) to system.db
+
+    def addOutgoingMC(self):
+
+        # Setting outgoingQuestion attribute values from inputs
+
+        self.outgoingQuestion.qID = self.newID
+        self.outgoingQuestion.category = self.question.category
+        self.outgoingQuestion.difficulty = self.entDifficulty.get()
+        self.outgoingQuestion.question = self.entQuestion.get()
+        self.outgoingQuestion.correct = self.entCorrect.get()
+        self.outgoingQuestion.wrong1 = self.entWrong1.get()
+        self.outgoingQuestion.wrong2 = self.entWrong2.get()
+        self.outgoingQuestion.wrong3 = self.entWrong3.get()
+
+        # Check for valid difficulty input
+
+        if (self.outgoingQuestion.difficulty == "Easy" or
+            self.outgoingQuestion.difficulty == "Medium" or
+            self.outgoingQuestion.difficulty == "Hard"):
+
+            # If any inputs are left blank, present error message
+
+            if (self.entDifficulty.get() == "" or self.entQuestion.get() == ""
+            or self.entCorrect.get() == "" or self.entWrong1.get() == "" or
+            self.entWrong2.get() == "" or self.entWrong3.get() == ""):
+
+                tkinter.messagebox.showwarning("Question Amend", "At least"
+                + " one attribute has been left empty" + ". Please ensure" +
+                " all attributes are filled in.",
+                parent=self)
+
+            else:
+
+                conn = sqlite3.connect('system.db')
+                c = conn.cursor ()
+
+                with conn:
+                    cur = conn.execute('''SELECT * FROM MC_QUESTION''')
+                    count = 0
+                    for i in (cur.fetchall()):
+                        if (i[1] == self.outgoingQuestion.question and
+                        i[2] == self.outgoingQuestion.category and
+                        i[3] == self.outgoingQuestion.difficulty and
+                        i[4] == self.outgoingQuestion.correct and
+                        i[5] == self.outgoingQuestion.wrong1 and
+                        i[6] == self.outgoingQuestion.wrong2 and
+                        i[7] == self.outgoingQuestion.wrong3):
+
+                            count = count + 1
+
+                    # If outgoingQuestion ID shares exactly the same attributes as other ID
+                    # present error message
+
+                    if (count > 0):
+
+                        tkinter.messagebox.showwarning("Question Amend", "A new ID"
+                        + " has not been created because an existing ID" +
+                        " was found with the exact same attributes.",
+                        parent=self)
+
+                    # If outgoingQuestion passses criteria, insert into system.db
+
+                    else:
+
+                        cur = conn.execute('''INSERT INTO MC_QUESTION (PID, QUESTION,
+                        CATEGORY, DIFFICULTY, CORRECT, WRONG1, WRONG2,
+                        WRONG3) VALUES (?,?,?,?,
+                        ?,?,?,?)''', (self.outgoingQuestion.qID,
+                        self.outgoingQuestion.question,
+                        self.outgoingQuestion.category,
+                        self.outgoingQuestion.difficulty,
+                        self.outgoingQuestion.correct,
+                        self.outgoingQuestion.wrong1,
+                        self.outgoingQuestion.wrong2,
+                        self.outgoingQuestion.wrong3))
+
+                        conn.commit()
+
+                        tkinter.messagebox.showinfo("Question Amend", "Amended"
+                        + " question added to database with ID: " + str(self.outgoingQuestion.qID),
+                        parent=self)
+
+                        self.closeWindow()
+
+        else:
+            tkinter.messagebox.showwarning("Question Amend", "You may only"
+            + " enter 'Easy', 'Medium' or 'Hard' for the difficulty attribute",
+            parent=self)
+
+    def closeWindow(self):
+
+        self.master.destroy()
