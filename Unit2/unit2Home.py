@@ -4,7 +4,7 @@ import tkinter.messagebox
 from unit2ResponseClass import submitResponse
 from unit2AmendWindow import *
 
-# Main Window Class
+# Main/Home Window Class
 
 class amendDeleteQuestions(Frame):
 
@@ -16,6 +16,8 @@ class amendDeleteQuestions(Frame):
         self.create_buttons()
         self.create_labels()
         self.create_options()
+
+        # Create buttons function
 
     def create_buttons(self):
 
@@ -31,6 +33,8 @@ class amendDeleteQuestions(Frame):
         buttonExit['command']=self.closeWindow
         buttonExit.grid(row=13, column=1, columnspan=2, padx=10, pady=10)
 
+        # Create scroll bar function; to show list of questions stored in system.db
+
     def create_scroll(self):
 
         self.listQuestions = Listbox(self, width=58, height=7)
@@ -39,6 +43,8 @@ class amendDeleteQuestions(Frame):
 
         self.listQuestions.grid(row=3, column=1, columnspan=2)
         scroll.grid(row=3, column=2, columnspan=2)
+
+        # Present and refresh questions stored in system.db
 
     def refreshQuestions(self):
 
@@ -58,6 +64,8 @@ class amendDeleteQuestions(Frame):
 
         self.listQuestions.selection_set(END)
 
+        # Create labels function
+
     def create_labels(self):
 
         lblSpecifyID = Label(self, text="Please note, Question ID's are also associated with Question Type. Hence"
@@ -74,6 +82,8 @@ class amendDeleteQuestions(Frame):
 
         lblSpecifyOption = Label(self, text="Please specify whether you wish to amend or delete this Question:", font=("Helvetica", 12, "bold"))
         lblSpecifyOption.grid(row=9, column=1, columnspan=2, padx=10, pady=10)
+
+        # Create user options (ID, MC/TF, amend/delete) function
 
     def create_options(self):
 
@@ -103,6 +113,8 @@ class amendDeleteQuestions(Frame):
 
         R2AmendDelete = Radiobutton(self, variable=self.varAmendDelete, value=2)
         R2AmendDelete.grid(row=11, column=2)
+
+        # Store Respnse (in shelve) function
 
     def storeResponse(self):
 
@@ -146,12 +158,16 @@ class amendDeleteQuestions(Frame):
 
             tkinter.messagebox.showwarning("Entry Error", strMsg)
 
+        # Clear GUI function
+
     def clearResponse(self):
 
         self.varAmendDelete.set(0)
         self.varType.set(0)
 
         self.entID.delete(0, END)
+
+        # Delete MC question from system.db function
 
     def removeMCQuestion(self, Ans):
 
@@ -161,14 +177,22 @@ class amendDeleteQuestions(Frame):
         c = conn.cursor ()
 
         with conn:
+
+            # First SQLite execution to check if MC ID exists
+
             cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
                 tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
             else:
+
+                # If it does exist, run DELETE MC execution
+
                 cur = conn.execute("DELETE FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
                 tkinter.messagebox.showinfo("Question Delete", "Question (ID: " + str(qID) + ") deleted. Use 'Refresh Stored Questions' button to clarify'")
 
         conn.commit()
+
+        # Delete TF question from system.db function
 
     def removeTFQuestion(self, Ans):
 
@@ -178,14 +202,22 @@ class amendDeleteQuestions(Frame):
         c = conn.cursor ()
 
         with conn:
+
+            # First SQLite execution to check if TF ID exists
+
             cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
                 tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
             else:
+
+                # If it does exist, run DELETE TF execution
+
                 cur = conn.execute("DELETE FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
                 tkinter.messagebox.showinfo("Question Delete", "Question (ID: " + str(qID) + ") deleted. Use 'Refresh Stored Questions' button to clarify'")
 
         conn.commit()
+
+        # Open Amend Window function
 
     def openAmendWindow(self, Ans):
 
@@ -195,30 +227,43 @@ class amendDeleteQuestions(Frame):
         c = conn.cursor ()
 
         with conn:
+
+            # If MC radio selected (with amend), SQLite execution to check ID exists
+
             if (Ans.radioValType == 1):
                 cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
                     tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+
+                    # If MC ID does exist (length of fetchall > 0), open Amend Window
+
                 else:
                     t1 = Toplevel()
                     t1.title("Amend Question")
-                    t1.geometry("1000x800")
+                    t1.geometry("1100x800")
                     amendQuestion(t1)
                     self.clearResponse()
 
+
+            # If TF radio selected (with amend), SQLite execution to check ID exists
 
             if (Ans.radioValType == 2):
                 cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
                     tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
                 else:
+
+                    # If TF ID does exist (length of fetchall > 0), open Amend Window
+
                     t1 = Toplevel()
                     t1.title("Amend Question")
-                    t1.geometry("1000x800")
+                    t1.geometry("1100x800")
                     amendQuestion(t1)
                     self.clearResponse()
 
         conn.commit()
+
+        # Close Main Window function
 
     def closeWindow(self):
 
