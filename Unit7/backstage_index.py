@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time : 2020/3/13 0:20
+# @Time : 2020/3/23 20:14
 # @Author : Tian ZHANG
 # @Site : 
 # @File : backstage_index.py
 # @Software: PyCharm
-# @Version: 1.1
+# @Version: 1.2
 
 import tkinter as tk
 from tkinter import ttk
@@ -27,14 +27,21 @@ class GUI:
         self.index_lf = ttk.LabelFrame(self.win, text='Backstage')
         self.index_lf.grid(column=0, row=1, padx=10, pady=8, sticky="W")
 
-        self.goto_unit1_btn = ttk.Button(self.index_lf, text='Create Question', command=self.goto_unit1)
+        self.goto_unit1_btn = ttk.Button(self.index_lf, text='Create Question',
+                                         width=30, command=self.goto_unit1)
         self.goto_unit1_btn.grid(column=0, row=0, padx=10, pady=8, sticky="W")
-        self.goto_unit2_btn = ttk.Button(self.index_lf, text='Manage Question', command=self.goto_unit2)
+        self.goto_unit2_btn = ttk.Button(self.index_lf, text='Manage Question',
+                                         width=30, command=self.goto_unit2)
         self.goto_unit2_btn.grid(column=1, row=0, padx=10, pady=8, sticky="W")
-        self.goto_unit3_btn = ttk.Button(self.index_lf, text='Manage Quiz', command=self.goto_unit3)
-        self.goto_unit3_btn.grid(column=0, row=1, padx=10, pady=8, sticky="W")
-        self.goto_unit4_btn = ttk.Button(self.index_lf, text="Back to Homepage", command=self.goto_unit4)
+        self.goto_unit3_btn = ttk.Button(self.index_lf, text='Manage Quiz',
+                                         width=30, command=self.goto_unit3)
+        self.goto_unit3_btn.grid(column=2, row=0, padx=10, pady=8, sticky="W")
+        self.goto_unit4_btn = ttk.Button(self.index_lf, text="Back to Homepage",
+                                         width=30, command=self.goto_unit4)
         self.goto_unit4_btn.grid(column=1, row=1, padx=10, pady=8, sticky="W")
+        self.goto_unit6_btn = ttk.Button(self.index_lf, text="Check Statistics",
+                                         width=30, command=self.goto_unit6)
+        self.goto_unit6_btn.grid(column=0, row=1, padx=10, pady=8, sticky="W")
 
     def quit(self):
         self.win.destroy()
@@ -59,6 +66,9 @@ class GUI:
         self.quit()
         self.back_home = home.Homepage()
         self.win.mainloop()
+
+    def goto_unit6(self):
+        pass
 
 
 if __name__ == "__main__":
