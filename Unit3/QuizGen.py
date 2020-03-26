@@ -31,8 +31,8 @@ def displayTF():
         print(row)
         tree.insert("", END, values=row)
     conn.close()
-    print(choiceDiff)
-    print(choiceCategory)
+    print(choiceDiffTF)
+    print(choiceCategoryTF)
 
 
 
@@ -61,7 +61,7 @@ def boxDifficultyValue(event):
 
 
 choiceCategoryTF = ""
-#Event for MC category
+#Event for TF category
 def boxCategoryValueTF(event):
     global boxcatvalueTF
     boxcatvalueTF = boxCategoryTF.get()
@@ -71,7 +71,7 @@ def boxCategoryValueTF(event):
 
 
 choiceDiffTF = ""
-#Event for MC difficulty
+#Event for TF difficulty
 def boxDifficultyValueTF(event):
     global choiceDiffTF
     choiceDiffTF = boxDifficultyTF.get()
@@ -83,7 +83,7 @@ def boxDifficultyValueTF(event):
 
 
 
-
+#Create MC Quiz table and add values
 def createMCQuiz():
     qID = []
     conn = sqlite3.connect("system.db")
@@ -129,10 +129,115 @@ def createMCQuiz():
     #cur.execute("INSERT INTO MC_QUIZ (Category, Difficulty, q1Id, q2Id, q3Id, q4Id, q5Id) VALUES (?, ?, ?, ?, ?, ?, ?)", (''.join(boxDifficulty.get()), ''.join(boxCategory.get()), qID[0][0], qID[1][0], qID[2][0], qID[3][0], qID[4][0]))
     conn.commit()
     conn.close()
-    print("Insertion done")
+    print("Insertion done for MC")
     
 
     
+
+
+
+
+
+
+
+#Create TF Quiz table and add values
+def createTFQuiz():
+    qID = []
+    conn = sqlite3.connect("system.db")
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS TF_QUIZ ("
+            "QuizID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " 
+            "CATEGORY TEXT NOT NULL, "
+            "DIFFICULTY TEXT NOT NULL, "
+            "q1Id TEXT, "
+            "q2Id TEXT, "
+            "q3Id TEXT, "
+            "q4Id TEXT, "
+            "q5Id TEXT, "
+            "FOREIGN KEY (q1Id) REFERENCES TF_QUESTION(pid), "
+            "FOREIGN KEY (q2Id) REFERENCES TF_QUESTION(pid), "
+            "FOREIGN KEY (q3Id) REFERENCES TF_QUESTION(pid), "
+            "FOREIGN KEY (q4Id) REFERENCES TF_QUESTION(pid), "
+            "FOREIGN KEY (q5Id) REFERENCES TF_QUESTION(pid))")
+    conn.commit()
+
+    print("Quiz TF table Created")
+
+
+    conn = sqlite3.connect("system.db")
+
+    cur.execute("SELECT pid FROM TF_QUESTION pid WHERE difficulty = ? AND category = ? ORDER BY RANDOM() LIMIT 5", (''.join(boxDifficultyTF.get()), ''.join(boxCategoryTF.get())))
+    item = cur.fetchall()
+    print("List of ID length is: ", len(item))
+    for row in item:
+        print(row)
+        qID.append(row)
+        
+        
+
+    
+    print(qID[1][0])
+    print(type(qID[1][0]))
+    print("Selection TF")
+
+    
+
+    cur.execute("INSERT INTO TF_QUIZ (Category, Difficulty, q1Id, q2Id, q3Id, q4Id, q5Id) VALUES (?, ?, ?, ?, ?, ?, ?)", (choiceCategoryTF, choiceDiffTF, qID[0][0], qID[1][0], qID[2][0], qID[3][0], qID[4][0]))
+    conn.commit()
+    conn.close()
+    print("Insertion done for TF")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Categories for MC QUESTION combobox
 categories = []
@@ -298,7 +403,7 @@ bGenQuiz.pack(side=BOTTOM)
 bDispAllQTF = Button(text="Display All TF Questions", command=displayTF)
 bDispAllQTF.pack(side=BOTTOM)
 
-bGenQuiz = Button(text="Create TF Quiz", command=createMCQuiz)
+bGenQuiz = Button(text="Create TF Quiz", command=createTFQuiz)
 bGenQuiz.pack(side=BOTTOM)
 
 
