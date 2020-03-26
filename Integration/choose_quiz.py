@@ -11,6 +11,7 @@ from tkinter import messagebox as msg
 from tkinter import ttk
 
 import new_homepage as home
+import quiz_button as quiz
 
 
 def error_popup():
@@ -61,11 +62,11 @@ class Window:
     def select_questions(self):
         if self.question_radio.get() == 1:
             self.tof_database()
-            self.label1.config(text="You have chosen a True or False Quiz", fg="Black")
+            # self.label1.config(text="You have chosen a True or False Quiz", fg="Black")
             self.button1.config(state="disabled")
         elif self.question_radio.get() == 2:
             self.mc_database()
-            self.label1.config(text="You have chosen a Multiple Choice Quiz", fg="Black")
+            # self.label1.config(text="You have chosen a Multiple Choice Quiz", fg="Black")
             self.button1.config(state="disabled")
         else:
             self.label1.config(text="Remember to choose the type of quiz before you click submit.", fg="Red")
@@ -84,12 +85,14 @@ class Window:
             cursor.close()
             question_mockup = []
             for i in x:
-                q_dict = {"id": i[0], "question": i[2], "answers": [i[5], i[6], i[7], i[4]], "correct_answer": i[4]}
+                q_dict = {"id": i[0], "question": i[1], "answers": [i[5], i[6], i[7], i[4]], "correct_answer": i[4]}
                 a = q_dict["answers"]
                 shuffle(a)
                 question_mockup.append(q_dict)
             print(question_mockup)
-            return question_mockup
+            msg.showinfo("Multiple Choice Quiz", "You have chosen a Multiple Choice Quiz")
+            self.quiz_chosen = question_mockup
+            self.take_quiz()
         except sqlite3.DatabaseError:
             error_popup()
 
@@ -109,7 +112,9 @@ class Window:
                     q_dict["correct_answer"] = "False"
                 question_mockup.append(q_dict)
             # print(question_mockup)
-            return question_mockup
+            msg.showinfo("True or False Quiz", "You have chosen a True or False Quiz")
+            self.quiz_chosen = question_mockup
+            self.take_quiz()
         except sqlite3.DatabaseError:
             error_popup()
 
@@ -120,6 +125,13 @@ class Window:
         self.quit()
         self.back_login = home.Homepage()
         self.root.mainloop()
+
+    def take_quiz(self):
+        self.quit()
+        self.window = tk.Tk()
+        self.quiz = quiz.RenderQuestions(self.window, self.quiz_chosen)
+        self.quiz.start_quiz()
+        self.window.mainloop()
 
 
 if __name__ == "__main__":
