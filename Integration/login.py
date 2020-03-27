@@ -66,8 +66,8 @@ class GUI:
 
     def back(self):
         self.quit()
-        self.back_home = home.Window()
-        self.win.mainloop()
+        self.back_home = home.Homepage()
+        self.back_home.root.mainloop()
 
 
 if __name__ == "__main__":
