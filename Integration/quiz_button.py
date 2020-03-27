@@ -1,57 +1,4 @@
 # coding=utf-8
-<<<<<<< HEAD
-import os
-import tkinter as tk
-import tkinter.font as tf
-
-from tkinter import messagebox
-from tkinter import simpledialog
-from tkinter import filedialog
-
-[
-    {
-     "id" : 1,
-     "isCorrect": 1
-     },
-    {
-        "id": 2,
-        "isCorrect": 0
-    },
-]
-
-question_mockup = [
-    {
-        'id': 1,
-        'question': 'question1',
-        'answers': ['a1', 'a2', 'A computer that has been broken by being flatted and crushed into another object', 'a4'],
-        'correct_answer': 'a1'
-    },
-    {
-        'id': 2,
-        'question': 'question2',
-        'answers': ['a1.1', 'a2', 'a3'],
-        'correct_answer': 'a2'
-    },
-    {
-        'id': 3,
-        'question': 'question3',
-        'answers': ['a1.3', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 4,
-        'question': 'question4',
-        'answers': ['a1.4', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 5,
-        'question': 'question3',
-        'answers': ['a1.5', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    }
-]
-=======
 import tkinter as tk
 import tkinter.font as tf
 from tkinter import messagebox
@@ -102,7 +49,6 @@ import choose_quiz as unit4
 #         'correct_answer': 'a3'
 #     }
 # ]
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
 
 # 模块化开发，统一标准，预留接口
 # restart 直接把前面的类 import 进来
@@ -122,14 +68,6 @@ class RenderQuestions():
         self.ipad_y = 5
         self.corrected_answer = 0
         self.final_data = []
-<<<<<<< HEAD
-                
-    def get_question_answer(self):
-        question_show = self.quiz_list[self.index]['question']
-        answer_show = self.quiz_list[self.index]['answers'] if self.quiz_list[self.index].__contains__('answers') else ['True', 'False']
-        correct_answer = self.quiz_list[self.index]['correct_answer']
-        self.q_id = self.quiz_list[self.index]['id']  
-=======
 
     def get_question_answer(self):
         question_show = self.quiz_list[self.index]['question']
@@ -137,41 +75,12 @@ class RenderQuestions():
             'True', 'False']
         correct_answer = self.quiz_list[self.index]['correct_answer']
         self.q_id = self.quiz_list[self.index]['id']
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
         # When get_question_answer is called, index plus one each time in order to go to next question
         self.index += 1
         return question_show, answer_show, correct_answer
 
     def start_quiz(self):
         self.window.title('Start Quiz')
-<<<<<<< HEAD
-        self.window.geometry('650x450')
-        quiz_data = self.get_question_answer()
-        
-        self.question_frame.pack(pady=20)
-        # Display quiz question
-        tk.Label(self.question_frame, text=quiz_data[0], font=self.l_style, width=30, height=2).pack(pady=10)
-        # Display question answers
-        choices = quiz_data[1]
-        
-            
-        for i in range(len(choices)):
-            button = tk.Button(self.question_frame,
-                               text=choices[i], width=30, font=self.b_style, wraplength=200, pady=10, padx=5,
-                                command=lambda chosen_answer=choices[i], correct=quiz_data[2]: self.option_click(chosen_answer, correct))
-            i += 1
-            button.pack(pady=5)
-        
-        
-        # Skip the question
-        tk.Button(self.question_frame, text='Skip', font=self.b_style, 
-                  command=lambda: self.next_click('skip')).pack(pady=40,side='right', ipadx=self.ipad_x, ipady=self.ipad_y)
-        # Finish the quiz
-        tk.Button(self.question_frame, text='Finish', font=self.b_style,
-                  command=lambda: self.next_click('finish')).pack(pady=40, side='left', ipadx=self.ipad_x, ipady=self.ipad_y)
-        
-        
-=======
         self.window.minsize(650, 450)
         quiz_data = self.get_question_answer()
 
@@ -198,31 +107,18 @@ class RenderQuestions():
                   command=lambda: self.next_click('finish')).pack(pady=40, side='left', ipadx=self.ipad_x,
                                                                   ipady=self.ipad_y)
 
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
     def option_click(self, chosen_answer, correct):
         if chosen_answer == correct:
             self.corrected_answer += 1
             self.clear_frame()
             tk.Label(self.question_frame, text='Congradulations! Correct Answer :)', font=self.l_style).pack(pady=20)
-<<<<<<< HEAD
-            tk.Button(self.question_frame, text='Next', command=lambda:self.next_click('next')).pack(ipadx=self.ipad_x, ipady=self.ipad_y)
-=======
             tk.Button(self.question_frame, text='Next', command=lambda: self.next_click('next')).pack(ipadx=self.ipad_x,
                                                                                                       ipady=self.ipad_y)
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
             self.data_collection(self.q_id, 1)
         else:
             self.clear_frame()
             i_pady = 0
             tk.Label(self.question_frame, text='Oops, Wrong Answer', font=self.l_style).pack(pady=i_pady)
-<<<<<<< HEAD
-            tk.Label(self.question_frame, text='The correct answer is %s' % correct, font=self.l_style).pack(pady=i_pady)
-            tk.Label(self.question_frame,text='Good luck with next time!', font=self.l_style).pack(pady=i_pady)
-            tk.Button(self.question_frame, text='Next', font=self.b_style, command=lambda: self.next_click('next')).pack(pady=10, ipadx=self.ipad_x, ipady=self.ipad_y)
-            self.data_collection(self.q_id, 0)
-            
-    def next_click(self, status):        
-=======
             tk.Label(self.question_frame, text='The correct answer is %s' % correct, font=self.l_style).pack(
                 pady=i_pady)
             tk.Label(self.question_frame, text='Good luck with next time!', font=self.l_style).pack(pady=i_pady)
@@ -231,7 +127,6 @@ class RenderQuestions():
             self.data_collection(self.q_id, 0)
 
     def next_click(self, status):
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
         # Determine if the current question index smaller than the quiz length to continue or finish
         if status == 'skip' and self.index < self.q_length:
             print(self.q_id)
@@ -247,11 +142,7 @@ class RenderQuestions():
             self.finish_quiz('finish_clicked')
         elif not self.index < self.q_length:
             self.finish_quiz('main')
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
     def finish_quiz(self, type):
         # Alert pops up when user try to finish the whole quiz
         if type == 'finish_clicked':
@@ -259,13 +150,8 @@ class RenderQuestions():
             if if_finish:
                 self.clear_frame()
                 self.result_display()
-<<<<<<< HEAD
-                #拿到目前的题目ID，用总长度减去目前的得到剩余的题目长度来循环
-                #循环的时候让目前题目ID加上增量 i ，以把剩下的题目都判断为错
-=======
                 # 拿到目前的题目ID，用总长度减去目前的得到剩余的题目长度来循环
                 # 循环的时候让目前题目ID加上增量 i ，以把剩下的题目都判断为错
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
                 # When pupil chose finish, the rest of questions are all marked as wrong 
                 # Get the current question ID and use the total length of quiz question subtract 
                 # the current ID to get the remaining question length to loop as wrong answers
@@ -280,27 +166,6 @@ class RenderQuestions():
             self.clear_frame()
             self.result_display()
 
-<<<<<<< HEAD
-            
-    def result_display(self):
-        tk.Label(self.question_frame, text='You finished all the questions!', font=self.l_style).pack()
-        tk.Label(self.question_frame, text='You\'ve got %d answer(s) corrected' % self.corrected_answer, font=self.l_style).pack()
-        tk.Label(self.question_frame, text='Thank you for taking this quiz :)', font=self.l_style).pack()
-        tk.Button(self.question_frame, text='Restart', command=self.restart).pack(pady=10, ipadx=5, ipady=3)
-        print(self.final_data)
-            
-            
-    def restart(self):
-        # need API from unit 4
-        # Initialize this below when start a nee quiz
-        self.corrected_answer = 0 
-        self.clear_frame()
-        self.index = 0
-        self.final_data = []
-        
-        self.start_quiz()
-    
-=======
     def result_display(self):
         tk.Label(self.question_frame, text='You finished all the questions!', font=self.l_style).pack()
         tk.Label(self.question_frame, text='You\'ve got %d answer(s) correct' % self.corrected_answer,
@@ -320,20 +185,10 @@ class RenderQuestions():
         self.choose = unit4.Window()
         self.choose.root.mainloop()
 
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
     def data_collection(self, passed_id, if_correct):
         temp = {'id': passed_id, "if_correct": if_correct}
         self.final_data.append(temp.copy())
         print(self.final_data)
-<<<<<<< HEAD
-        
-    def get_final_data(self):
-        return self.final_data
-             
-    def clear_frame(self):
-         for widget in self.question_frame.winfo_children():  # clear widgets in frame
-                widget.destroy()
-=======
 
     def get_final_data(self):
         return self.final_data
@@ -341,7 +196,6 @@ class RenderQuestions():
     def clear_frame(self):
         for widget in self.question_frame.winfo_children():  # clear widgets in frame
             widget.destroy()
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
 
 
 if __name__ == '__main__':
@@ -349,9 +203,5 @@ if __name__ == '__main__':
     # Render interface
     render = RenderQuestions(window, question_mockup)
     render.start_quiz()
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> e94a3e6569b1b1d930c8c0ea7532c731b77ebf33
     window.mainloop()
