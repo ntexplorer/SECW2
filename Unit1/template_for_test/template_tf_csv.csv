@@ -1,6 +1,8 @@
 QUESTION,CATEGORY,DIFFICULTY,CANSWER
-Question1,Computer Science,Hard,1
-Question2,Nature,Medium,0
-Question3,Computer Science,Easy,0
-Question4,Nature,Hard,1
-Question5,Cookery,Medium,0
+This is the sample question 1,Computer Science,Hard,1
+This is the sample question 2,Nature,Medium,0
+This is the sample question 3,Computer Science,Easy,0
+This is the sample question 4,Nature,Hard,1
+This is the sample question 5,Sports,Medium,0
+This is the sample question 6,Art,Easy,1
+This is the sample question 7,History,Hard,0
