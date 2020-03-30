@@ -128,11 +128,11 @@ class amendDeleteQuestions(Frame):
             strMsg = "You need to specify a Question ID. "
             self.clearResponse()
 
-        if (self.varType.get() == 0):
+        elif (self.varType.get() == 0):
             strMsg = "You need to select a Question Type. "
             self.clearResponse()
 
-        if (self.varAmendDelete.get() == 0):
+        elif (self.varAmendDelete.get() == 0):
             strMsg = "You need to select Amend or Delete. "
             self.clearResponse()
 
