@@ -5,7 +5,7 @@ from tkinter import *
 from u2_question_class import *
 
 
-# Amend Window Class
+# Amend Window Class/Page
 
 class amendQuestion(Frame):
 
