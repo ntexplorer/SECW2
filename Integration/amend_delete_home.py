@@ -126,12 +126,15 @@ class amendDeleteQuestions(Frame):
 
         if strEntID == "":
             strMsg = "You need to specify a Question ID. "
+            self.clearResponse()
 
-        if (self.varType.get() == 0):
-            strMsg = strMsg + "You need to select a Question Type. "
+        elif (self.varType.get() == 0):
+            strMsg = "You need to select a Question Type. "
+            self.clearResponse()
 
-        if (self.varAmendDelete.get() == 0):
-            strMsg = strMsg + "You need to select Amend or Delete. "
+        elif (self.varAmendDelete.get() == 0):
+            strMsg = "You need to select Amend or Delete. "
+            self.clearResponse()
 
         if strMsg == "":
 
@@ -185,7 +188,9 @@ class amendDeleteQuestions(Frame):
 
             cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
-                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(
+                    qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                self.clearResponse()
             else:
 
                 # If it does exist, run DELETE MC execution
@@ -210,7 +215,9 @@ class amendDeleteQuestions(Frame):
 
             cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
-                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(
+                    qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                self.clearResponse()
             else:
 
                 # If it does exist, run DELETE TF execution
@@ -236,7 +243,9 @@ class amendDeleteQuestions(Frame):
             if (Ans.radioValType == 1):
                 cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
-                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(
+                        qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                    self.clearResponse()
 
                     # If MC ID does exist (length of fetchall > 0), open Amend Window
 
@@ -253,7 +262,9 @@ class amendDeleteQuestions(Frame):
             if (Ans.radioValType == 2):
                 cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
-                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(
+                        qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                    self.clearResponse()
                 else:
 
                     # If TF ID does exist (length of fetchall > 0), open Amend Window
