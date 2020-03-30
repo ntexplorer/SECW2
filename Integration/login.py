@@ -12,7 +12,7 @@ from tkinter import messagebox as msg
 from tkinter import ttk
 
 import backstage_index as bkm
-import homepage as home
+import new_homepage as home
 
 
 class GUI:
@@ -66,8 +66,8 @@ class GUI:
 
     def back(self):
         self.quit()
-        self.back_home = home.Window()
-        self.win.mainloop()
+        self.back_home = home.Homepage()
+        self.back_home.root.mainloop()
 
 
 if __name__ == "__main__":
