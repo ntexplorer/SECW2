@@ -33,7 +33,7 @@ person2 = [
     {"id": 2, "isCorrect": 0, "q": "2?"},
     {"id": 2, "isCorrect": 1, "q": "2?"},
     {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 3, "isCorrect": 1, "q": "3?"},
+    {"id": 3, "isCorrect": 1, "q": "3esrdecftvgybrdectfvrgytbdercftvgybcerdfvtg?"},
     {"id": 4, "isCorrect": 0, "q": "4?"},
     {"id": 4, "isCorrect": 1, "q": "4?"},
     {"id": 4, "isCorrect": 0, "q": "4?"},
@@ -167,6 +167,7 @@ class ckStat:
                                             "File name: {}".format(time.strftime("%Y%m%d %Hh%Mm%Ss", time.localtime())))
         file.close()
 
+    # ============== Functions for GUI ======================
     def quit(self):
         win = tk.Tk()
         win.quit()
@@ -313,7 +314,7 @@ class ckStat:
         global quesDisp
         quesDisp = tk.StringVar()
         ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
-                  relief="groove").grid(column=1, row=0, padx=15, pady=20)
+                  relief="groove", wraplength=120).grid(column=1, row=0, padx=15, pady=20)
 
         win.mainloop()
 
