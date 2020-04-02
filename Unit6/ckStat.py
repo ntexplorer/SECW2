@@ -1,12 +1,9 @@
 import os
 import time
 import tkinter as tk
-from tkinter import Listbox
 from tkinter import Menu
 from tkinter import ttk
 from tkinter import messagebox as msg
-from tkinter import Scrollbar
-from tkinter import scrolledtext
 
 person1 = [
     {"id": 2, "isCorrect": 0, "q": "2?"},
@@ -67,7 +64,7 @@ class ckStat:
     def doCalculate(self, listPpl):
 
         personQuiz = listPpl
-        # self.quizID = ckStat.quizID
+
         # Accuracy for single person.
         global corID_dict, allID_dict, accuForQuesID, QuizQues_dict, accuForPpl
 
@@ -77,7 +74,7 @@ class ckStat:
         for x in personQuiz[ckStat.quizID]:  # show how many questions for the person
             ckStat.qIdList.append(
                 personQuiz[ckStat.quizID][countQues].get("id"))  # append all Question id into qIdList
-            # print(personBig[1][8])
+
             # append all questions into EachQues_list.
             ckStat.qIdQues.append(personQuiz[ckStat.quizID][countQues].get("q"))
 
@@ -134,54 +131,6 @@ class ckStat:
         for keys, values in newDic.items():
             ckStat.QuesWithID_List.append("\nQ{}: {}\n".format(keys, str(values)))
 
-        # create QuesWithID{Q1: "1?", Q2: "2?", ... Qn: "n?"}
-        # ckStat.getQidQues_dict(list(allID_dict.keys()), list(QuizQues_dict.keys()))
-        # ckStat.getQidQues_dict(list(allID_dict.keys(), list(QuizQues_dict.keys())))
-
-        # print("accuracy for single person: {:.2%}.".format(self.accuForPpl))  # accuracy for single person
-        # print("average accuracy for all people: {:.2%}.".format(self.aveAccu))  # average accuracy for all
-        # people print("accuracy for each question: {}.".format(self.accuOfEachQues_dict))  # accuracy for each
-
-        # question in dict
-        # def checkAccu(self): pass # # Accuracy for single person. # global corID_dict, allID_dict, accuForQuesID #
-
-    # countQues = 0 # corrQuesNum = 0 # # # accuracy for person # for x in self.personQuiz:  # show how many
-    # questions for the person #     ckStat.qIdList.append(self.personQuiz[countQues].get("id"))  # append
-    # all Question id into qIdList # #     ansForQues = self.personQuiz[countQues].get("isCorrect")  # show if answer
-    # isCorrect #     if ansForQues is 1:  # check if answer is correct #         corrQuesNum += 1 #
-    # corrQuesID = self.personQuiz[countQues].get("id")  # if correct, add id to correctQuesID list #
-    # ckStat.corListQid.append(corrQuesID) # #     else: #         pass # #     # create dictionaries #
-    # corID_dict = {}  # set dict storing correct ID #     allID_dict = {}  # set dict storing all ID # #     for
-    # cQId in ckStat.corListQid:  # show times of each correct question id #         corID_dict[cQId] =
-    # corID_dict.get(cQId, 0) + 1  # create new dict for correct Q's ID #     for aQid in ckStat.qIdList:  #
-    # show times of all question ids #         allID_dict[aQid] = allID_dict.get(aQid, 0) + 1  # create new dict for
-    # all Q's ID # #     countQues += 1  # control the counter # # # create new dict for saving accuracy of each
-    # questions {Q1: 50.00%, Q2: 25.00%, ... Qn: 100.00%} # accuOfEachQues_dict = {} # # # accuracy for each question
-    # for allKeys in allID_dict.keys():  # scan values by keys #     if corID_dict.get(allKeys) is None:  # incorrect
-    # question's value would be None #         corID_dict[allKeys] = 0  # if None/int, TypeError. set None to 0 #
-    # else: #         accuByQid = corID_dict.get(allKeys) / allID_dict.get(allKeys)  # calculate accuracy #
-    # percentAccu = "%.2f%%" % (accuByQid * 100)  # switch float type to percentage #         accuOfEachQues_dict[
-    # allKeys] = percentAccu  # set keys and values into dict #         print("Qid{}: {:.2%}".format(allKeys,
-    # accuByQid))  # print out # # accuForPerson = corrQuesNum / countQues # ckStat.corListPerson.append(
-    # accuForPerson)  # append correct percentage of each person into list # # averageAccu = 0 # for ppl in range(
-    # len(ckStat.corListPerson)): #     averageAccu = (averageAccu + accuForPerson) / len(
-    # ckStat.corListPerson)  # calculate for average% # # print("accuracy for single person: {:.2%}.".format(
-    # accuForPerson))  # accuracy for single person # print("average accuracy for all people: {:.2%}.".format(
-    # averageAccu))  # average accuracy for all people # print("accuracy for each question: {}.".format(
-    # accuOfEachQues_dict))  # accuracy for each question in dict # for ppl in range(len(self.person)):  # count
-    # number of people #     print("******************\nPerson {}".format(ppl + 1)) #     for numOfQues in range(len(
-    # self.person[0])):  # count number of qestions #         print("Hi, this is person{0}'s ({1}) question!".format(
-    # ppl + 1, numOfQues + 1)) # # if person1[0][numOfQues][1] == 1: isCorrect += 1       # if correct, counter + 1
-    # print("Nice, question{} is # correct.\n".format(numOfQues+1)) else: # print("Sorry, question{} isn't
-    # correct.\n".format(numOfQues+1)) # pass correctNum = isCorrect ckStat.scoreListforALL.append(
-    # correctNum) print("person{}'s got {} # corrects.\naccuracy is: {:.2%}".format(ppl+1, correctNum,
-    # correctNum/len(person1[0])))
-    #
-    #     # print("This is the score list for person: ", ckStat.correctListforPerson)
-    # def combineDict(self):
-    #     newDic = dict(map(lambda x, y: [x, y], list(allID_dict.keys()), list(QuizQues_dict.keys())))
-    #     return newDic
-
     def ckStatValues(self, select):  # feel free to use these data
         self.select = select
         if select == "aveAccu":
@@ -235,7 +184,7 @@ class ckStat:
 
     def importFile(self):
         for i in range(100):
-            progBar["value"] = i+1
+            progBar["value"] = i + 1
             averAccu_Frame.update()
             time.sleep(0.007)
 
@@ -366,52 +315,10 @@ class ckStat:
         ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
                   relief="groove").grid(column=1, row=0, padx=15, pady=20)
 
-
-
-
         win.mainloop()
 
 
+if __name__ == "__main__":
+    personZ = ckStat()
+    personZ.display()
 
-personZ = ckStat()
-personZ.display()
-
-"""
-quizformat
-
-person1 = [
-            {QuesId: 1, isCorrect: 0},
-            {QuesId: 2, isCorrect: 1},
-            {QuesId: 3, isCorrect: 0},            
-         ]
-
-1: person accuracy V
-2: question accuracy V
-3: average score V
-4: 输出的内容全放在另一个function里  V
-
-按钮，输入框，
-button参数command 链接到 function，function读取输出的数据并返回到label的框里
-print的东西拿来label用来输出，
-表格显示，scrollbar，widgets：tree，
-做格式的调整，label里wraplines，
-第五章：数据作为图表，柱状图：widget canvas，
-ttk
-
-输出，print用button
-数据库/ 创建txt/ 
-import os 
-"""
-
-"""
-question what, display single accuracy
-
-1: button: refresh, get data from Elliy; 
-    E provide function
-    
-2: Change Entry to Label V
-
-3: delete menu bar V
-4: question topic V
-
-"""
