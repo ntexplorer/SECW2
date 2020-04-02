@@ -178,9 +178,8 @@ class ckStat:
             if self.item[0] in QID_List[i]:
                 quesDisp.set("{}".format(QID_List[i]))
 
-    # import data
+    # ================ import data ================
     def importFile(self):
-
 
         for i in range(100):
             progBar["value"] = i + 1
