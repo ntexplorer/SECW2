@@ -166,6 +166,8 @@ class ckStat:
 
     # display score
     def importScore(self):
+        impScore.grid_remove()
+        impScore.grid()
         aveAccur.set("{:.2%}".format(ckStat.accuForPpl))
 
     # display Questions
@@ -178,11 +180,13 @@ class ckStat:
 
     # import data
     def importFile(self):
+
+
         for i in range(100):
             progBar["value"] = i + 1
             averAccu_Frame.update()
             time.sleep(0.007)
-
+        impFile.grid_remove()
         x = ckStat()
         if ckStat.quizID == 0:
             x.doCalculate(personBig)
@@ -191,19 +195,20 @@ class ckStat:
             x.doCalculate(personBig)
             ckStat.quizID += 1
         msg.showinfo("Congratulations", "File import complete. \n")
+        impFile.grid()
 
     # clean label and tree
     def cleanAll(self):
         x = tree.get_children()
         for item in x:
             tree.delete(item)
-        for widget in averAccu_Frame.winfo_children():
-            widget.destroy()
-        for widgt in quesFrame.winfo_children():
-            widgt.destroy()
+        quesDisp.set("")
+        aveAccur.set("")
 
     # display detail of each question
     def displayDetail(self):
+        output_DetailBut.grid_remove()
+        output_DetailBut.grid()
         # display Question-Accuracy
         data = ckStat.EachQues_List
         for keys in range(len(data)):
@@ -244,9 +249,12 @@ class ckStat:
         averAccu_Frame.grid(column=0, row=0, padx=20, pady=20)
 
         # create button: ImportFile
+        global impFile
         impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.importFile)
         impFile.grid(column=0, row=0, padx=10, pady=10)
         # create button: importScore
+
+        global impScore
         impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.importScore)
         impScore.grid(column=1, row=0, padx=55, pady=10)
 
@@ -260,9 +268,11 @@ class ckStat:
             .grid(column=1, row=1, padx=20, pady=10)
 
         # create Exit button
+        global exitBut
         exitBut = ttk.Button(averAccu_Frame, text="Exit", command=quit)
         exitBut.grid(column=0, row=2, padx=10, pady=20)
 
+        global output_ScoreBut
         output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
         output_ScoreBut.grid(column=1, row=2, padx=15, pady=20)
 
@@ -281,6 +291,7 @@ class ckStat:
         quesFrame.grid(column=0, row=0, padx=20, pady=20)
 
         # create button: importDetail
+        global output_DetailBut
         output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.displayDetail)
         output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
 
@@ -307,8 +318,6 @@ class ckStat:
         tree.configure(yscrollcommand=tScrollbar.set)
         tScrollbar.grid(column=2, row=1, sticky="NS")
 
-        sep = ttk.Separator(win, orient="horizontal")
-        sep.pack(fill=tk.X)
         # =========== create new Frame for question display============
         dispFrame = ttk.LabelFrame(tab2, text="Question display")
         dispFrame.grid(column=0, row=1, padx=20, pady=10, sticky="w")
