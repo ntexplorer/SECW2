@@ -1,19 +1,21 @@
-from tkinter import *
 import sqlite3
 import tkinter.messagebox
 from tkinter import *
 from tkinter import ttk
 
-import backstage_index as bks
+
+# import backstage_index as bks
 
 
 class QuizGen:
 
-    def __init__(self, categories=[], difficulties=[], categoriesTF=[], difficultiesTF=[]):
+    def __init__(self, categories=[], difficulties=[], categoriesTF=[], difficultiesTF=[], currentMC=[], currentTF=[]):
         self.difficulties = difficulties
         self.categories = categories
         self.difficultiesTF = difficultiesTF
         self.categoriesTF = categoriesTF
+        self.currentMC = currentMC
+        self.currentTF = currentTF
         self.root = Tk()
         self.root.title("Quiz Manager")
         self.window_ui()
@@ -21,6 +23,10 @@ class QuizGen:
         self.showDifficulties()
         self.showCategoriesTF()
         self.showDifficultiesTF()
+        self.quizInUseTable()
+        self.mcInUse()
+        self.tfInUse()
+        self.quizTreeCurrent()
 
     # Going back to main menu
     def goBack(self):
@@ -80,6 +86,21 @@ class QuizGen:
         for row in self.rows:
             print(row)
             self.tree4.insert("", END, values=row)
+        self.conn.close()
+
+    # Loading and displaying all current quiz in Treeview
+    def quizTreeCurrent(self):
+        self.conn = sqlite3.connect("system.db")
+        self.cur = self.conn.cursor()
+        try:
+            self.cur.execute("SELECT * FROM CURRENT_QUIZ")
+        except:
+            pass
+        self.rows = self.cur.fetchall()
+        self.tree5.delete(*self.tree5.get_children())
+        for row in self.rows:
+            print(row)
+            self.tree5.insert("", END, values=row)
         self.conn.close()
 
     # Event for MC category
@@ -193,6 +214,73 @@ class QuizGen:
             pass
         self.boxCategoryTF.bind("<<ComboboxSelected>>", lambda x: self.boxCategoryValueTF())
 
+    # Table for Quiz in use
+    def quizInUseTable(self):
+        self.conn = sqlite3.connect("system.db")
+        self.cur = self.conn.cursor()
+        try:
+            self.cur.execute("CREATE TABLE IF NOT EXISTS CURRENT_QUIZ ("
+                             "MCUSED INTEGER, "
+                             "TFUSED INTEGER, "
+                             "FOREIGN KEY (MCUSED) REFERENCES MC_QUIZ(QuizID), "
+                             "FOREIGN KEY (TFUSED) REFERENCES TF_QUIZ(QuizID)) ")
+            self.conn.commit()
+            self.conn.close()
+        except sqlite3.OperationalError:
+            pass
+
+    # MC in use
+    def mcInUse(self):
+        self.conn = sqlite3.connect("system.db")
+        self.cur = self.conn.cursor()
+        try:
+
+            self.cur.execute("SELECT QuizID FROM MC_QUIZ")
+            self.rows = self.cur.fetchall()
+            for row in self.rows:
+                print(row)
+                self.currentMC.append(row[0])
+            self.conn.commit()
+            self.conn.close()
+        except sqlite3.OperationalError:
+            pass
+
+        self.lbselectMC = Label(self.tab7, text="Select Multiple Choice Quiz to use")
+        self.lbselectMC.pack(ipady=50)
+
+        self.boxSelectMC = ttk.Combobox(self.tab7, values=self.currentMC, width=30, state="readonly")
+        self.boxSelectMC.pack()
+
+    # TF in Use
+    def tfInUse(self):
+        self.conn = sqlite3.connect("system.db")
+        self.cur = self.conn.cursor()
+        try:
+            self.cur.execute("SELECT QuizID FROM TF_QUIZ")
+            self.rows = self.cur.fetchall()
+            for row in self.rows:
+                print(row)
+                self.currentMC.append(row[0])
+            self.conn.commit()
+            self.conn.close()
+        except sqlite3.OperationalError:
+            pass
+
+        self.lbselectTF = Label(self.tab7, text="Select True/False Quiz to use")
+        self.lbselectTF.pack(ipady=50)
+
+        self.boxSelectTF = ttk.Combobox(self.tab7, values=self.currentTF, width=30, state="readonly")
+        self.boxSelectTF.pack()
+
+    # For button use quiz
+    def useQuiz(self):
+        self.conn = sqlite3.connect("system.db")
+        self.cur = self.conn.cursor()
+        self.cur.execute("UPDATE CURRENT_QUIZ SET MCUSED = ?, TFUSED = ?",
+                         (self.boxSelectMC.get(), self.boxSelectTF.get()))
+        self.conn.commit()
+        self.conn.close()
+
     # Difficulties for TF QUESTION combobox
 
     def showDifficultiesTF(self):
@@ -229,11 +317,11 @@ class QuizGen:
                          "QuizID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                          "CATEGORY TEXT NOT NULL, "
                          "DIFFICULTY TEXT NOT NULL, "
-                         "q1Id TEXT, "
-                         "q2Id TEXT, "
-                         "q3Id TEXT, "
-                         "q4Id TEXT, "
-                         "q5Id TEXT, "
+                         "q1Id INTEGER, "
+                         "q2Id INTEGER, "
+                         "q3Id INTEGER, "
+                         "q4Id INTEGER, "
+                         "q5Id INTEGER, "
                          "FOREIGN KEY (q1Id) REFERENCES MC_QUESTION(pid), "
                          "FOREIGN KEY (q2Id) REFERENCES MC_QUESTION(pid), "
                          "FOREIGN KEY (q3Id) REFERENCES MC_QUESTION(pid), "
@@ -354,9 +442,14 @@ class QuizGen:
         self.tabs.add(self.tab5, text="Multiple Choice Quiz Viewer")
         self.tabs.pack(expand=1, fill="both")
 
-        # Tab5
+        # Tab6
         self.tab6 = ttk.Frame(self.tabs)
         self.tabs.add(self.tab6, text="True/False Quiz Viewer")
+        self.tabs.pack(expand=1, fill="both")
+
+        # Tab7
+        self.tab7 = ttk.Frame(self.tabs)
+        self.tabs.add(self.tab7, text="Quizzes in use")
         self.tabs.pack(expand=1, fill="both")
 
         # Tab Name Labels
@@ -384,9 +477,13 @@ class QuizGen:
         self.tab6Title.pack()
         self.tab6Title.config(font=("Ubuntu", 40))
 
+        self.tab6Title = ttk.Label(self.tab7, text="Quizzes in Use")
+        self.tab6Title.pack()
+        self.tab6Title.config(font=("Ubuntu", 40))
+
         # Tree for MC QUESTION
         self.tree = ttk.Treeview(self.tab1, column=(
-        "column", "colunn1", "colunn2", "colunn3", "colunn4", "colunn5", "colunn6", "colunn7"), show="headings")
+            "column", "colunn1", "colunn2", "colunn3", "colunn4", "colunn5", "colunn6", "colunn7"), show="headings")
         self.tree.heading("#0", text="NUMBER")
         self.tree.heading("#1", text="ID")
         self.tree.heading("#2", text="Question")
@@ -437,6 +534,14 @@ class QuizGen:
         self.tree4.heading("#8", text="Question 5")
         self.tree4.pack()
 
+        # Tree for quiz in use
+        self.tree5 = ttk.Treeview(self.tab7, column=(
+            "column", "colunn1", "colunn2"), show="headings")
+        self.tree5.heading("#0", text="NUMBER")
+        self.tree5.heading("#1", text="Multi Choice Quiz")
+        self.tree5.heading("#2", text="True/False Quiz")
+        self.tree5.pack()
+
         # Buttons for MC QUESTION
         self.bDispAllQ = Button(self.tab1, text="Display All Multiple Choice Questions", command=self.display)
         self.bDispAllQ.pack(side=BOTTOM, ipady=50, expand=1)
@@ -457,9 +562,14 @@ class QuizGen:
         self.bDispAllQuizesTF = Button(self.tab6, text="Display All True/False Quizzes", command=self.quizDispTF)
         self.bDispAllQuizesTF.pack(side=BOTTOM, ipady=50, expand=1)
 
+        # Button for quiz in use
+        self.bUseQuiz = Button(self.tab7, text="Use those quizes", command=self.useQuiz)
+        self.bUseQuiz.pack(side=BOTTOM, ipady=30, pady=15, expand=1)
+
         # Button for going back
         self.backButton = Button(self.root, text="Back to main menu", command=self.goBack)
         self.backButton.pack()
+
 
 
 if __name__ == "__main__":

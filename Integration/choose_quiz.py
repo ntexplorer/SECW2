@@ -80,7 +80,7 @@ class Window:
         try:
             db = sqlite3.connect("system.db")
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM MC_QUESTION ORDER BY RANDOM()")
+            cursor.execute("SELECT * FROM MC_QUESTION ORDER BY RANDOM() LIMIT 5")
             x = cursor.fetchall()
             cursor.close()
             question_mockup = []
@@ -100,7 +100,7 @@ class Window:
         try:
             db = sqlite3.connect("system.db")
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM TF_QUESTION ORDER BY RANDOM()")
+            cursor.execute("SELECT * FROM TF_QUESTION ORDER BY RANDOM() LIMIT 5")
             x = cursor.fetchall()
             cursor.close()
             question_mockup = []

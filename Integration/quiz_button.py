@@ -6,39 +6,40 @@ from tkinter import messagebox
 
 import choose_quiz as unit4
 
-question_mockup = [
-    {
-        'id': 1,
-        'question': 'question1',
-        'answers': ['a1', 'a2', 'A computer that has been broken by being flatted and crushed into another object',
-                    'a4'],
-        'correct_answer': 'a1'
-    },
-    {
-        'id': 2,
-        'question': 'question2',
-        'answers': ['a1.1', 'a2', 'a3'],
-        'correct_answer': 'a2'
-    },
-    {
-        'id': 3,
-        'question': 'question3',
-        'answers': ['a1.3', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 4,
-        'question': 'question4',
-        'answers': ['a1.4', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 5,
-        'question': 'question5',
-        'answers': ['a1.5', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    }
-]
+
+# question_mockup = [
+#     {
+#         'id': 1,
+#         'question': 'question1',
+#         'answers': ['a1', 'a2', 'A computer that has been broken by being flatted and crushed into another object',
+#                     'a4'],
+#         'correct_answer': 'a1'
+#     },
+#     {
+#         'id': 2,
+#         'question': 'question2',
+#         'answers': ['a1.1', 'a2', 'a3'],
+#         'correct_answer': 'a2'
+#     },
+#     {
+#         'id': 3,
+#         'question': 'question3',
+#         'answers': ['a1.3', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     },
+#     {
+#         'id': 4,
+#         'question': 'question4',
+#         'answers': ['a1.4', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     },
+#     {
+#         'id': 5,
+#         'question': 'question5',
+#         'answers': ['a1.5', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     }
+# ]
 
 # 模块化开发，统一标准，预留接口
 
@@ -211,11 +212,10 @@ class RenderQuestions():
         for widget in self.question_frame.winfo_children():  # clear widgets in frame
             widget.destroy()
 
-
-if __name__ == '__main__':
-    window = tk.Tk()
-    # Render interface
-    render = RenderQuestions(window, question_mockup)
-    render.start_quiz()
-
-    window.mainloop()
+# if __name__ == '__main__':
+#     window = tk.Tk()
+#     # Render interface
+#     render = RenderQuestions(window, question_mockup)
+#     render.start_quiz()
+#
+#     window.mainloop()
