@@ -12,6 +12,7 @@ from tkinter import ttk
 
 import add_question as unit1
 import amend_delete_home as unit2
+import check_statistics as unit6
 import new_homepage as home
 import quiz_gen as unit3
 
@@ -71,7 +72,9 @@ class GUI:
         self.win.mainloop()
 
     def goto_unit6(self):
-        pass
+        self.quit()
+        self.unit6 = unit6.ckStat()
+        self.unit6.win.mainloop()
 
 
 if __name__ == "__main__":
