@@ -1,11 +1,11 @@
 QUESTION,CATEGORY,DIFFICULTY,CANSWER,WANSWER1,WANSWER2,WANSWER3
-This is the sample question 11,Language,Hard,This is the sample correct answer.,	This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 11,Language,Hard,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
 This is the sample question 12,Computer Science,Easy,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
-This is the sample question 13,History,Medium,This is the sample correct answer.,	This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
-This is the sample question 14,Sports,Easy	,This is the sample correct answer.,	This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
-This is the sample question 15,Video Game,Easy,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,	This is the sample wrong answer 3
-This is the sample question 16,Art,Easy,This is the sample correct answer.,	This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
-This is the sample question 17,Nature,Medium,This is the sample correct answer.,	This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
-This is the sample question 18,	Music,Hard,This is the sample correct answer.	,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 13,History,Medium,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 14,Sports,Easy	,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 15,Video Game,Easy,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 16,Art,Easy,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 17,Nature,Medium,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
+This is the sample question 18,Music,Hard,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
 This is the sample question 19,Art,Hard,This is the sample correct answer.	,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3
 This is the sample question 20,Computer Science,Hard,This is the sample correct answer.,This is the sample wrong answer 1,This is the sample wrong answer 2,This is the sample wrong answer 3

@@ -13,6 +13,7 @@ from tkinter import ttk
 import add_question as unit1
 import amend_delete_home as unit2
 import new_homepage as home
+import quiz_gen as unit3
 
 
 class GUI:
@@ -60,7 +61,9 @@ class GUI:
         root.mainloop()
 
     def goto_unit3(self):
-        pass
+        self.quit()
+        self.unit3 = unit3.QuizGen()
+        self.unit3.root.mainloop()
 
     def goto_unit4(self):
         self.quit()
