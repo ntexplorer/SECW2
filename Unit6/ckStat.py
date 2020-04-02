@@ -173,9 +173,11 @@ class ckStat:
         win.quit()
         exit()
 
+    # display score
     def importScore(self):
         aveAccur.set("{:.2%}".format(ckStat.accuForPpl))
 
+    # display Questions
     def quesDisplay(self, event):
         self.item = list(tree.item(tree.selection()[0], "values"))
         QID_List = ckStat.QuesWithID_List
@@ -183,6 +185,7 @@ class ckStat:
             if self.item[0] in QID_List[i]:
                 quesDisp.set("{}".format(QID_List[i]))
 
+    # import data
     def importFile(self):
         for i in range(100):
             progBar["value"] = i + 1
@@ -198,12 +201,19 @@ class ckStat:
             ckStat.quizID += 1
         msg.showinfo("Congratulations", "File import complete. \n")
 
-    def cleanTable(self):
+    # clean label and tree
+    def cleanAll(self):
         x = tree.get_children()
         for item in x:
             tree.delete(item)
         quesDisp.set("")
+        aveAccur.set("")
+        for widget in averAccu_Frame.winfo_children():
+            widget.destroy()
+        for widgt in quesFrame.winfo_children():
+            widgt.destroy()
 
+    # display detail of each question
     def displayDetail(self):
         # display Question-Accuracy
         data = ckStat.EachQues_List
@@ -225,7 +235,10 @@ class ckStat:
 
         # create File bar
         menu_bar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Clean", command=self.cleanAll)
+        file_menu.add_separator()
         file_menu.add_command(label="Exit", command=quit)
+
 
         # ============== create new Tabs =================
         tabControl = ttk.Notebook(win, padding=2)
@@ -274,6 +287,7 @@ class ckStat:
         # ============ set new Tab for display each question's details =============
 
         # add Question detail display part
+        global quesFrame
         quesFrame = ttk.LabelFrame(tab2, text="Question-Accuracy display")
         quesFrame.grid(column=0, row=0, padx=20, pady=20)
 
@@ -282,15 +296,16 @@ class ckStat:
         output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
 
         # create clean button
-        clean_But = ttk.Button(quesFrame, text="Clean Table", command=self.cleanTable)
+        clean_But = ttk.Button(quesFrame, text="Clean All", command=self.cleanAll)
         clean_But.grid(column=1, row=0, padx=10, pady=10)
 
         ttk.Label(quesFrame, text="Correct percentage for each question : ", wraplength=120, justify="center") \
             .grid(column=0, row=1, padx=15, pady=15)
 
         # add treeview display scores
-        global tree
-        tree = ttk.Treeview(quesFrame, height=4, show="headings", columns=("Question ID", "Accuracy"))
+        global tree, columns
+        columns = ("Question ID", "Accuracy")
+        tree = ttk.Treeview(quesFrame, height=4, show="headings", columns=columns)
         tree.column("Question ID", width=100, anchor="center")
         tree.column("Accuracy", width=100, anchor="center")
         tree.heading("Question ID", text="Question ID")
