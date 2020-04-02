@@ -131,15 +131,6 @@ class ckStat:
         for keys, values in newDic.items():
             ckStat.QuesWithID_List.append("\nQ{}: {}\n".format(keys, str(values)))
 
-    def ckStatValues(self, select):  # feel free to use these data
-        self.select = select
-        if select == "aveAccu":
-            return float(self.aveAccu)
-        elif select == "QuesDict":
-            return "{}".format(" ".join(ckStat.EachQues_List))
-        else:
-            pass
-
     def outputTXT(self):  # output data into .txt
         folderName = "ckStatData"
 
