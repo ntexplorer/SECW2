@@ -206,8 +206,6 @@ class ckStat:
         x = tree.get_children()
         for item in x:
             tree.delete(item)
-        quesDisp.set("")
-        aveAccur.set("")
         for widget in averAccu_Frame.winfo_children():
             widget.destroy()
         for widgt in quesFrame.winfo_children():
