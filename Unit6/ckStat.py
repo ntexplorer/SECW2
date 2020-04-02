@@ -50,42 +50,42 @@ person2 = [
     {"id": 6, "isCorrect": 1, "q": "6?"},
     {"id": 6, "isCorrect": 0, "q": "6?"},
 ]
-personBig = [person1, person2]
+personBig = [person2, person1]
 
 
-class CheckStatistic:
+class ckStat:
     corListPpl = []  # this list store people's score.
     corListQid = []  # this list store accuracy of per question
     qIdList = []  # this is the list for all appeared question id
     EachQues_List = []  # this is the list to store all keys&values in EachQues_dict.
     qIdQues = []  # the list for questions
     QuesWithID_List = []
-
+    accuForPpl = 0
+    quizID = 0
     i = 0
 
-    def __init__(self, human):
-        self.personQuiz = human
-        quizID = 0
+    def doCalculate(self, listPpl):
 
+        personQuiz = listPpl
+        # self.quizID = ckStat.quizID
         # Accuracy for single person.
-        global corID_dict, allID_dict, accuForQuesID, QuizQues_dict
+        global corID_dict, allID_dict, accuForQuesID, QuizQues_dict, accuForPpl
+
         countQues = 0
         corrQuesNum = 0
-
         # accuracy for person
-        for x in self.personQuiz[quizID]:  # show how many questions for the person
-            CheckStatistic.qIdList.append(
-                self.personQuiz[quizID][countQues].get("id"))  # append all Question id into qIdList
-
+        for x in personQuiz[ckStat.quizID]:  # show how many questions for the person
+            ckStat.qIdList.append(
+                personQuiz[ckStat.quizID][countQues].get("id"))  # append all Question id into qIdList
+            # print(personBig[1][8])
             # append all questions into EachQues_list.
-            CheckStatistic.qIdQues.append(self.personQuiz[quizID][countQues].get("q"))
+            ckStat.qIdQues.append(personQuiz[ckStat.quizID][countQues].get("q"))
 
-            ansForQues = self.personQuiz[quizID][countQues].get("isCorrect")  # show if answer isCorrect
+            ansForQues = personQuiz[ckStat.quizID][countQues].get("isCorrect")  # show if answer isCorrect
             if ansForQues is 1:  # check if answer is correct
-                corrQuesNum += 1
-                corrQuesID = self.personQuiz[quizID][countQues].get(
-                    "id")  # if correct, add id to correctQuesID list
-                CheckStatistic.corListQid.append(corrQuesID)
+                corrQuesNum += 1  # if correct, add id to correctQuesID list
+                corrQuesID = personQuiz[ckStat.quizID][countQues].get("id")
+                ckStat.corListQid.append(corrQuesID)
             else:
                 pass
 
@@ -93,9 +93,9 @@ class CheckStatistic:
             corID_dict = {}  # set dict storing correct ID
             allID_dict = {}  # set dict storing all ID
 
-            for cQId in CheckStatistic.corListQid:  # show times of each correct question id
+            for cQId in ckStat.corListQid:  # show times of each correct question id
                 corID_dict[cQId] = corID_dict.get(cQId, 0) + 1  # create new dict for correct Q's ID
-            for aQid in CheckStatistic.qIdList:  # show times of all question ids
+            for aQid in ckStat.qIdList:  # show times of all question ids
                 allID_dict[aQid] = allID_dict.get(aQid, 0) + 1  # create new dict for all Q's ID
 
             countQues += 1  # control the counter
@@ -108,29 +108,35 @@ class CheckStatistic:
             if corID_dict.get(allKeys) is None:  # incorrect question's value would be None
                 corID_dict[allKeys] = 0  # if None/int, TypeError. set None to 0
             else:
-                accuByQid = corID_dict.get(allKeys) / allID_dict.get(allKeys)  # calculate accuracy
+                accuByQid = corID_dict.get(allKeys, 0) / allID_dict.get(allKeys, 0)  # calculate accuracy
                 percentAccu = "%.2f%%" % (accuByQid * 100)  # switch float type to percentage
                 self.EachQues_dict["Q{}".format(allKeys)] = percentAccu  # set keys and values into dict
                 # print("Qid{}: {:.2%}".format(allKeys, accuByQid))  # print out
 
-        self.accuForPpl = corrQuesNum / countQues
-        CheckStatistic.corListPpl.append(self.accuForPpl)  # append correct percentage of each person into list
+        ckStat.accuForPpl = corrQuesNum / countQues
+        ckStat.corListPpl.append(ckStat.accuForPpl)  # append correct percentage of each person into list
 
         self.aveAccu = 0
-        for ppl in range(len(CheckStatistic.corListPpl)):
-            self.aveAccu = (self.aveAccu + self.accuForPpl) / len(
-                CheckStatistic.corListPpl)  # calculate for average
+        for ppl in range(len(ckStat.corListPpl)):
+            self.aveAccu = (self.aveAccu + ckStat.accuForPpl) / len(ckStat.corListPpl)  # calculate for average
 
         # create new dict for saving each qid's question dict
         QuizQues_dict = {}
 
         # store question with qid
-        for keys in CheckStatistic.qIdQues:
+        for keys in ckStat.qIdQues:
             QuizQues_dict[keys] = QuizQues_dict.get(keys, 0) + 1
 
+        # combine QuestionID_dict with Questions_dict to a new Dict showing Q{}: {}
+        newDic = dict(map(lambda x, y: [x, y], list(allID_dict.keys()), list(QuizQues_dict.keys())))
+        for keys, values in self.EachQues_dict.items():
+            ckStat.EachQues_List.append("\n{}: {}\n".format(keys, str(values)))
+        for keys, values in newDic.items():
+            ckStat.QuesWithID_List.append("\nQ{}: {}\n".format(keys, str(values)))
+
         # create QuesWithID{Q1: "1?", Q2: "2?", ... Qn: "n?"}
-        # CheckStatistic.getQidQues_dict(list(allID_dict.keys()), list(QuizQues_dict.keys()))
-        # CheckStatistic.getQidQues_dict(list(allID_dict.keys(), list(QuizQues_dict.keys())))
+        # ckStat.getQidQues_dict(list(allID_dict.keys()), list(QuizQues_dict.keys()))
+        # ckStat.getQidQues_dict(list(allID_dict.keys(), list(QuizQues_dict.keys())))
 
         # print("accuracy for single person: {:.2%}.".format(self.accuForPpl))  # accuracy for single person
         # print("average accuracy for all people: {:.2%}.".format(self.aveAccu))  # average accuracy for all
@@ -139,19 +145,15 @@ class CheckStatistic:
         # question in dict
         # def checkAccu(self): pass # # Accuracy for single person. # global corID_dict, allID_dict, accuForQuesID #
 
-    def _importData(self):  # import data 1 by 1
-        CheckStatistic.quizID += 1
-
-
     # countQues = 0 # corrQuesNum = 0 # # # accuracy for person # for x in self.personQuiz:  # show how many
-    # questions for the person #     CheckStatistic.qIdList.append(self.personQuiz[countQues].get("id"))  # append
+    # questions for the person #     ckStat.qIdList.append(self.personQuiz[countQues].get("id"))  # append
     # all Question id into qIdList # #     ansForQues = self.personQuiz[countQues].get("isCorrect")  # show if answer
     # isCorrect #     if ansForQues is 1:  # check if answer is correct #         corrQuesNum += 1 #
     # corrQuesID = self.personQuiz[countQues].get("id")  # if correct, add id to correctQuesID list #
-    # CheckStatistic.corListQid.append(corrQuesID) # #     else: #         pass # #     # create dictionaries #
+    # ckStat.corListQid.append(corrQuesID) # #     else: #         pass # #     # create dictionaries #
     # corID_dict = {}  # set dict storing correct ID #     allID_dict = {}  # set dict storing all ID # #     for
-    # cQId in CheckStatistic.corListQid:  # show times of each correct question id #         corID_dict[cQId] =
-    # corID_dict.get(cQId, 0) + 1  # create new dict for correct Q's ID #     for aQid in CheckStatistic.qIdList:  #
+    # cQId in ckStat.corListQid:  # show times of each correct question id #         corID_dict[cQId] =
+    # corID_dict.get(cQId, 0) + 1  # create new dict for correct Q's ID #     for aQid in ckStat.qIdList:  #
     # show times of all question ids #         allID_dict[aQid] = allID_dict.get(aQid, 0) + 1  # create new dict for
     # all Q's ID # #     countQues += 1  # control the counter # # # create new dict for saving accuracy of each
     # questions {Q1: 50.00%, Q2: 25.00%, ... Qn: 100.00%} # accuOfEachQues_dict = {} # # # accuracy for each question
@@ -160,10 +162,10 @@ class CheckStatistic:
     # else: #         accuByQid = corID_dict.get(allKeys) / allID_dict.get(allKeys)  # calculate accuracy #
     # percentAccu = "%.2f%%" % (accuByQid * 100)  # switch float type to percentage #         accuOfEachQues_dict[
     # allKeys] = percentAccu  # set keys and values into dict #         print("Qid{}: {:.2%}".format(allKeys,
-    # accuByQid))  # print out # # accuForPerson = corrQuesNum / countQues # CheckStatistic.corListPerson.append(
+    # accuByQid))  # print out # # accuForPerson = corrQuesNum / countQues # ckStat.corListPerson.append(
     # accuForPerson)  # append correct percentage of each person into list # # averageAccu = 0 # for ppl in range(
-    # len(CheckStatistic.corListPerson)): #     averageAccu = (averageAccu + accuForPerson) / len(
-    # CheckStatistic.corListPerson)  # calculate for average% # # print("accuracy for single person: {:.2%}.".format(
+    # len(ckStat.corListPerson)): #     averageAccu = (averageAccu + accuForPerson) / len(
+    # ckStat.corListPerson)  # calculate for average% # # print("accuracy for single person: {:.2%}.".format(
     # accuForPerson))  # accuracy for single person # print("average accuracy for all people: {:.2%}.".format(
     # averageAccu))  # average accuracy for all people # print("accuracy for each question: {}.".format(
     # accuOfEachQues_dict))  # accuracy for each question in dict # for ppl in range(len(self.person)):  # count
@@ -171,11 +173,11 @@ class CheckStatistic:
     # self.person[0])):  # count number of qestions #         print("Hi, this is person{0}'s ({1}) question!".format(
     # ppl + 1, numOfQues + 1)) # # if person1[0][numOfQues][1] == 1: isCorrect += 1       # if correct, counter + 1
     # print("Nice, question{} is # correct.\n".format(numOfQues+1)) else: # print("Sorry, question{} isn't
-    # correct.\n".format(numOfQues+1)) # pass correctNum = isCorrect CheckStatistic.scoreListforALL.append(
+    # correct.\n".format(numOfQues+1)) # pass correctNum = isCorrect ckStat.scoreListforALL.append(
     # correctNum) print("person{}'s got {} # corrects.\naccuracy is: {:.2%}".format(ppl+1, correctNum,
     # correctNum/len(person1[0])))
     #
-    #     # print("This is the score list for person: ", CheckStatistic.correctListforPerson)
+    #     # print("This is the score list for person: ", ckStat.correctListforPerson)
     # def combineDict(self):
     #     newDic = dict(map(lambda x, y: [x, y], list(allID_dict.keys()), list(QuizQues_dict.keys())))
     #     return newDic
@@ -185,33 +187,22 @@ class CheckStatistic:
         if select == "aveAccu":
             return float(self.aveAccu)
         elif select == "QuesDict":
-            return "{}".format(" ".join(CheckStatistic.EachQues_List))
+            return "{}".format(" ".join(ckStat.EachQues_List))
         else:
             pass
 
-        # accuForPpl = self.accuForPpl
-        # aveAccu = self.aveAccu  #
-        # accuEachQues = self.accuEachQues_dict
-
     def outputTXT(self):  # output data into .txt
-        folderName = "CheckStatisticData"
-        # combine QuestionID_dict with Questions_dict to a new Dict showing Q{}: {}
-        newDic = dict(map(lambda x, y: [x, y], list(allID_dict.keys()), list(QuizQues_dict.keys())))
+        folderName = "ckStatData"
 
-        for keys, values in self.EachQues_dict.items():
-            CheckStatistic.EachQues_List.append("\n{}: {}\n".format(keys, str(values)))
-        for keys, values in newDic.items():
-            CheckStatistic.QuesWithID_List.append("{}: {}".format(keys, str(values)))
-
-        text = ["The score for this person: {:.2%}\n\n".format(self.accuForPpl),
+        text = ["The score for this person: {:.2%}\n\n".format(ckStat.accuForPpl),
                 # "The average score: {:.2%}\n\n".format(self.aveAccu),
-                "\nThe calculate for each questions: \n{}\n".format(" ".join(CheckStatistic.EachQues_List)),
-                "\nHere are the question lists. \n\n{}" \
-                    .format(" ".join(CheckStatistic.QuesWithID_List))]
+                "\nThe calculate for each questions: \n{}\n".format(" ".join(ckStat.EachQues_List)),
+                "\nHere are the question lists. \n{}" \
+                    .format(" ".join(ckStat.QuesWithID_List))]
 
         if folderName not in os.listdir(os.getcwd()):  # if not in, then create folder and files
-            os.mkdir("CheckStatisticData")  # create new dir to store output
-            os.chdir("CheckStatisticData")  # change dir
+            os.mkdir("ckStatData")  # create new dir to store output
+            os.chdir("ckStatData")  # change dir
             file = open("{}.txt".format(time.strftime("%Y%m%d %Hh%Mm%Ss", time.localtime())), mode="w")  # create file
             file.writelines(text)
             os.chdir("../")
@@ -219,7 +210,7 @@ class CheckStatistic:
                                             "File name: {}".format(time.strftime("%Y%m%d %Hh%Mm%Ss", time.localtime())))
 
         else:  # if yes, create files
-            os.chdir("CheckStatisticData")  # change dir
+            os.chdir("ckStatData")  # change dir
             file = open("{}.txt".format(time.strftime("%Y%m%d %Hh%Mm%Ss", time.localtime())), mode="w")
             file.writelines(text)
             os.chdir("../")
@@ -227,12 +218,49 @@ class CheckStatistic:
                                             "File name: {}".format(time.strftime("%Y%m%d %Hh%Mm%Ss", time.localtime())))
         file.close()
 
-    def _quit(self):
+    def quit(self):
         win = tk.Tk()
         win.quit()
         exit()
 
-    # ================Build GUI==================
+    def importScore(self):
+        aveAccur.set("{:.2%}".format(ckStat.accuForPpl))
+
+    def quesDisplay(self, event):
+        self.item = list(tree.item(tree.selection()[0], "values"))
+        QID_List = ckStat.QuesWithID_List
+        for i in range(len(QID_List)):
+            if self.item[0] in QID_List[i]:
+                quesDisp.set("{}".format(QID_List[i]))
+
+    def importFile(self):
+        for i in range(100):
+            progBar["value"] = i+1
+            averAccu_Frame.update()
+            time.sleep(0.007)
+
+        x = ckStat()
+        if ckStat.quizID == 0:
+            x.doCalculate(personBig)
+            ckStat.quizID += 1
+        else:
+            x.doCalculate(personBig)
+            ckStat.quizID += 1
+        msg.showinfo("Congratulations", "File import complete. \n")
+
+    def cleanTable(self):
+        x = tree.get_children()
+        for item in x:
+            tree.delete(item)
+        quesDisp.set("")
+
+    def displayDetail(self):
+        # display Question-Accuracy
+        data = ckStat.EachQues_List
+        for keys in range(len(data)):
+            tree.insert("", keys, values=data[keys])
+
+    # ================ Build GUI ==================
     def display(self):
 
         # create new gui
@@ -249,42 +277,103 @@ class CheckStatistic:
         menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Exit", command=quit)
 
-        # ==============create new Tabs=================
-        tabControl = ttk.Notebook(win)
+        # ============== create new Tabs =================
+        tabControl = ttk.Notebook(win, padding=2)
         tab1 = ttk.Frame(tabControl)
         tabControl.add(tab1, text="Score")
         tab2 = ttk.Frame(tabControl)
         tabControl.add(tab2, text="Questions")
         tabControl.pack(expand=1, fill="both")
-        # ==============set first tab=============
+
+        # ============== set first tab =============
         # set new Tab as Score
+        global averAccu_Frame
         averAccu_Frame = ttk.Labelframe(tab1, text="Score Display")
         averAccu_Frame.grid(column=0, row=0, padx=20, pady=20)
 
-        # create button: impData
-        impDataBut = ttk.Button(averAccu_Frame, text="Import Data", command=CheckStatistic._importData)
-        impDataBut.grid(column=0, row=0, padx=10, pady=10)
+        # create button: ImportFile
+        impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.importFile)
+        impFile.grid(column=0, row=0, padx=10, pady=10)
+        # create button: importScore
+        impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.importScore)
+        impScore.grid(column=1, row=0, padx=55, pady=10)
 
         # set Person score part
-        ttk.Label(averAccu_Frame, text="Person's Score (%) : ").grid(column=0, row=1, padx=15, pady=10)
-        averageAccuracy = tk.StringVar()
+        ttk.Label(averAccu_Frame, text="Person's Score (%) : ").grid(column=0, row=1, padx=15, pady=10, sticky="e")
+        global aveAccur
+        aveAccur = tk.StringVar()
 
-        ttk.Label(averAccu_Frame, width=15, textvariable=averageAccuracy, justify="center", relief="groove") \
+        ttk.Label(averAccu_Frame, textvariable=aveAccur, width=20, borderwidth=2, anchor="center",
+                  relief="groove") \
             .grid(column=1, row=1, padx=20, pady=10)
 
         # create Exit button
         exitBut = ttk.Button(averAccu_Frame, text="Exit", command=quit)
         exitBut.grid(column=0, row=2, padx=10, pady=20)
 
-        outputBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
-        outputBut.grid(column=1, row=2, padx=15, pady=20)
+        output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
+        output_ScoreBut.grid(column=1, row=2, padx=15, pady=20)
+
+        # ============= set progressbar ==============
+        pBar_Frame = ttk.LabelFrame(tab1, text="Progressing...")
+        pBar_Frame.grid(column=0, row=1, padx=20, pady=10)
+        global progBar
+        progBar = ttk.Progressbar(pBar_Frame, length=350, mode="determinate", orient=tk.HORIZONTAL)
+        progBar.grid(column=0, row=0, padx=5, pady=10)
+
+        # ============ set new Tab for display each question's details =============
+
+        # add Question detail display part
+        quesFrame = ttk.LabelFrame(tab2, text="Question-Accuracy display")
+        quesFrame.grid(column=0, row=0, padx=20, pady=20)
+
+        # create button: importDetail
+        output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.displayDetail)
+        output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
+
+        # create clean button
+        clean_But = ttk.Button(quesFrame, text="Clean Table", command=self.cleanTable)
+        clean_But.grid(column=1, row=0, padx=10, pady=10)
+
+        ttk.Label(quesFrame, text="Correct percentage for each question : ", wraplength=120, justify="center") \
+            .grid(column=0, row=1, padx=15, pady=15)
+
+        # add treeview display scores
+        global tree
+        tree = ttk.Treeview(quesFrame, height=4, show="headings", columns=("Question ID", "Accuracy"))
+        tree.column("Question ID", width=100, anchor="center")
+        tree.column("Accuracy", width=100, anchor="center")
+        tree.heading("Question ID", text="Question ID")
+        tree.heading("Accuracy", text="Accuracy")
+        tree.grid(column=1, row=1, padx=15, pady=5, sticky="NEWS")
+        tree.bind("<ButtonRelease-1>", self.quesDisplay)
+
+        # add tree Scrollbar
+        tScrollbar = ttk.Scrollbar(quesFrame, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=tScrollbar.set)
+        tScrollbar.grid(column=2, row=1, sticky="NS")
+
+        sep = ttk.Separator(win, orient="horizontal")
+        sep.pack(fill=tk.X)
+        # =========== create new Frame for question display============
+        dispFrame = ttk.LabelFrame(tab2, text="Question display")
+        dispFrame.grid(column=0, row=1, padx=20, pady=10, sticky="w")
+
+        ttk.Label(dispFrame, text="Question display : ").grid(column=0, row=0, padx=15, pady=10)
+
+        global quesDisp
+        quesDisp = tk.StringVar()
+        ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
+                  relief="groove").grid(column=1, row=0, padx=15, pady=20)
+
+
+
 
         win.mainloop()
 
-    print(CheckStatistic.quizID)
 
 
-personZ = CheckStatistic(personBig)
+personZ = ckStat()
 personZ.display()
 
 """
