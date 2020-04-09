@@ -1,53 +1,57 @@
 import os
+import sqlite3
 import time
 import tkinter as tk
 from tkinter import Menu
-from tkinter import ttk
 from tkinter import messagebox as msg
+from tkinter import ttk
 
-person1 = [
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 3, "isCorrect": 0, "q": "3?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 5, "isCorrect": 0, "q": "5?"},
-    {"id": 5, "isCorrect": 0, "q": "5?"},
-    {"id": 5, "isCorrect": 0, "q": "5?"},
-    {"id": 6, "isCorrect": 0, "q": "6?"},
-    {"id": 6, "isCorrect": 0, "q": "6?"},
-    {"id": 6, "isCorrect": 1, "q": "6?"},
-    {"id": 6, "isCorrect": 0, "q": "6?"},
-]
-person2 = [
-    {"id": 2, "isCorrect": 1, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 1, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 2, "isCorrect": 1, "q": "2?"},
-    {"id": 2, "isCorrect": 0, "q": "2?"},
-    {"id": 3, "isCorrect": 1, "q": "3esrdecftvgybrdectfvrgytbdercftvgybcerdfvtg?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 4, "isCorrect": 1, "q": "4?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 4, "isCorrect": 0, "q": "4?"},
-    {"id": 2, "isCorrect": 1, "q": "2?"},
-    {"id": 5, "isCorrect": 1, "q": "5?"},
-    {"id": 5, "isCorrect": 1, "q": "5?"},
-    {"id": 5, "isCorrect": 1, "q": "5?"},
-    {"id": 6, "isCorrect": 0, "q": "6?"},
-    {"id": 6, "isCorrect": 1, "q": "6?"},
-    {"id": 6, "isCorrect": 1, "q": "6?"},
-    {"id": 6, "isCorrect": 0, "q": "6?"},
-]
-personBig = [person2, person1]
+import backstage_index as index
+
+
+# person1 = [
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 3, "isCorrect": 0, "q": "3?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 5, "isCorrect": 0, "q": "5?"},
+#     {"id": 5, "isCorrect": 0, "q": "5?"},
+#     {"id": 5, "isCorrect": 0, "q": "5?"},
+#     {"id": 6, "isCorrect": 0, "q": "6?"},
+#     {"id": 6, "isCorrect": 0, "q": "6?"},
+#     {"id": 6, "isCorrect": 1, "q": "6?"},
+#     {"id": 6, "isCorrect": 0, "q": "6?"},
+# ]
+# person2 = [
+#     {"id": 2, "isCorrect": 1, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 1, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 2, "isCorrect": 1, "q": "2?"},
+#     {"id": 2, "isCorrect": 0, "q": "2?"},
+#     {"id": 3, "isCorrect": 1, "q": "3esrdecftvgybrdectfvrgytbdercftvgybcerdfvtg?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 4, "isCorrect": 1, "q": "4?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 4, "isCorrect": 0, "q": "4?"},
+#     {"id": 2, "isCorrect": 1, "q": "2?"},
+#     {"id": 5, "isCorrect": 1, "q": "5?"},
+#     {"id": 5, "isCorrect": 1, "q": "5?"},
+#     {"id": 5, "isCorrect": 1, "q": "5?"},
+#     {"id": 6, "isCorrect": 0, "q": "6?"},
+#     {"id": 6, "isCorrect": 1, "q": "6?"},
+#     {"id": 6, "isCorrect": 1, "q": "6?"},
+#     {"id": 6, "isCorrect": 0, "q": "6?"},
+# ]
+# personBig = [person2, person1]
 
 
 class ckStat:
@@ -61,6 +65,119 @@ class ckStat:
     quizID = 0
     i = 0
 
+    def __init__(self):
+
+        # create new gui
+        self.win = tk.Tk()
+        self.win.title("CHECK STATISTIC - Quiz System by Team G")
+        self.win.resizable(False, False)
+
+        # set menus
+        menu_bar = Menu(self.win)
+        self.win.config(menu=menu_bar)
+        file_menu = Menu(menu_bar, tearoff=0)
+
+        # create File bar
+        menu_bar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Clean", command=self.cleanAll)
+        file_menu.add_separator()
+        file_menu.add_command(label="Back", command=self.go_back)
+
+        # ============== create new Tabs =================
+        tabControl = ttk.Notebook(self.win, padding=2)
+        tab1 = ttk.Frame(tabControl)
+        tabControl.add(tab1, text="Score")
+        tab2 = ttk.Frame(tabControl)
+        tabControl.add(tab2, text="Questions")
+        tabControl.pack(expand=1, fill="both")
+
+        # ============== set first tab =============
+        # set new Tab as Score
+        global averAccu_Frame
+        averAccu_Frame = ttk.Labelframe(tab1, text="Score Display")
+        averAccu_Frame.grid(column=0, row=0, padx=20, pady=20)
+
+        # create button: ImportFile
+        global impFile
+        impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.importFile)
+        impFile.grid(column=0, row=0, padx=10, pady=10)
+        # create button: importScore
+
+        global impScore
+        impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.importScore)
+        impScore.grid(column=1, row=0, padx=55, pady=10)
+
+        # set Person score part
+        ttk.Label(averAccu_Frame, text="Person's Score (%) : ").grid(column=0, row=1, padx=15, pady=10, sticky="e")
+        global aveAccur
+        aveAccur = tk.StringVar()
+
+        ttk.Label(averAccu_Frame, textvariable=aveAccur, width=20, borderwidth=2, anchor="center",
+                  relief="groove") \
+            .grid(column=1, row=1, padx=20, pady=10)
+
+        # create Exit button
+        global exitBut
+        exitBut = ttk.Button(averAccu_Frame, text="Back", command=self.go_back)
+        exitBut.grid(column=0, row=2, padx=10, pady=20)
+
+        global output_ScoreBut
+        output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
+        output_ScoreBut.grid(column=1, row=2, padx=15, pady=20)
+
+        # ============= set progressbar ==============
+        pBar_Frame = ttk.LabelFrame(tab1, text="Progressing...")
+        pBar_Frame.grid(column=0, row=1, padx=20, pady=10)
+        global progBar
+        progBar = ttk.Progressbar(pBar_Frame, length=350, mode="determinate", orient=tk.HORIZONTAL)
+        progBar.grid(column=0, row=0, padx=5, pady=10)
+
+        # ============ set new Tab for display each question's details =============
+
+        # add Question detail display part
+        global quesFrame
+        quesFrame = ttk.LabelFrame(tab2, text="Question-Accuracy display")
+        quesFrame.grid(column=0, row=0, padx=20, pady=20)
+
+        # create button: importDetail
+        global output_DetailBut
+        output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.displayDetail)
+        output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
+
+        # create clean button
+        clean_But = ttk.Button(quesFrame, text="Clean All", command=self.cleanAll)
+        clean_But.grid(column=1, row=0, padx=10, pady=10)
+
+        ttk.Label(quesFrame, text="Correct percentage for each question : ", wraplength=120, justify="center") \
+            .grid(column=0, row=1, padx=15, pady=15)
+
+        # add treeview display scores
+        global tree, columns
+        columns = ("Question ID", "Accuracy")
+        tree = ttk.Treeview(quesFrame, height=4, show="headings", columns=columns)
+        tree.column("Question ID", width=100, anchor="center")
+        tree.column("Accuracy", width=100, anchor="center")
+        tree.heading("Question ID", text="Question ID")
+        tree.heading("Accuracy", text="Accuracy")
+        tree.grid(column=1, row=1, padx=15, pady=5, sticky="NEWS")
+        tree.bind("<ButtonRelease-1>", self.quesDisplay)
+
+        # add tree Scrollbar
+        tScrollbar = ttk.Scrollbar(quesFrame, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=tScrollbar.set)
+        tScrollbar.grid(column=2, row=1, sticky="NS")
+
+        # =========== create new Frame for question display============
+        dispFrame = ttk.LabelFrame(tab2, text="Question display")
+        dispFrame.grid(column=0, row=1, padx=20, pady=10, sticky="w")
+
+        ttk.Label(dispFrame, text="Question display : ").grid(column=0, row=0, padx=15, pady=10)
+
+        global quesDisp
+        quesDisp = tk.StringVar()
+        ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
+                  relief="groove", wraplength=120).grid(column=1, row=0, padx=15, pady=20)
+
     def doCalculate(self, listPpl):
 
         personQuiz = listPpl
@@ -71,17 +188,17 @@ class ckStat:
         countQues = 0
         corrQuesNum = 0
         # accuracy for person
-        for x in personQuiz[ckStat.quizID]:  # show how many questions for the person
+        for x in personQuiz:  # show how many questions for the person
             ckStat.qIdList.append(
-                personQuiz[ckStat.quizID][countQues].get("id"))  # append all Question id into qIdList
+                personQuiz[countQues].get("id"))  # append all Question id into qIdList
 
             # append all questions into EachQues_list.
-            ckStat.qIdQues.append(personQuiz[ckStat.quizID][countQues].get("q"))
+            ckStat.qIdQues.append(personQuiz[countQues].get("q"))
 
-            ansForQues = personQuiz[ckStat.quizID][countQues].get("isCorrect")  # show if answer isCorrect
+            ansForQues = personQuiz[countQues].get("isCorrect")  # show if answer isCorrect
             if ansForQues is 1:  # check if answer is correct
                 corrQuesNum += 1  # if correct, add id to correctQuesID list
-                corrQuesID = personQuiz[ckStat.quizID][countQues].get("id")
+                corrQuesID = personQuiz[countQues].get("id")
                 ckStat.corListQid.append(corrQuesID)
             else:
                 pass
@@ -160,9 +277,12 @@ class ckStat:
 
     # ============== Functions for GUI ======================
     def quit(self):
-        win = tk.Tk()
-        win.quit()
-        exit()
+        self.win.destroy()
+
+    def go_back(self):
+        self.quit()
+        self.back_index = index.GUI()
+        self.win.mainloop()
 
     # display score
     def importScore(self):
@@ -180,21 +300,33 @@ class ckStat:
 
     # ================ import data ================
     def importFile(self):
-
         for i in range(100):
             progBar["value"] = i + 1
             averAccu_Frame.update()
             time.sleep(0.007)
         impFile.grid_remove()
-        x = ckStat()
         if ckStat.quizID == 0:
-            x.doCalculate(personBig)
+            self.doCalculate(self.retrieve_data())
             ckStat.quizID += 1
         else:
-            x.doCalculate(personBig)
+            self.doCalculate(self.retrieve_data())
             ckStat.quizID += 1
         msg.showinfo("Congratulations", "File import complete. \n")
         impFile.grid()
+
+    def retrieve_data(self):
+        self.conn = sqlite3.connect("system.db")
+        self.c = self.conn.cursor()
+        self.c.execute("SELECT * FROM STATISTICS")
+        self.x = self.c.fetchall()
+        self.conn.commit()
+        self.conn.close()
+        self.statistics_mockup = []
+        for i in self.x:
+            s_dict = {"id": i[0], "q": i[1], "isCorrect": i[2]}
+            self.statistics_mockup.append(s_dict)
+        print(self.statistics_mockup)
+        return self.statistics_mockup
 
     # clean label and tree
     def cleanAll(self):
@@ -214,124 +346,8 @@ class ckStat:
             tree.insert("", keys, values=data[keys])
 
     # ================ Build GUI ==================
-    def display(self):
-
-        # create new gui
-        win = tk.Tk()
-        win.title("CHECK STATISTIC - Quiz System by Team G")
-        win.resizable(False, False)
-
-        # set menus
-        menu_bar = Menu(win)
-        win.config(menu=menu_bar)
-        file_menu = Menu(menu_bar, tearoff=0)
-
-        # create File bar
-        menu_bar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Clean", command=self.cleanAll)
-        file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=quit)
-
-
-        # ============== create new Tabs =================
-        tabControl = ttk.Notebook(win, padding=2)
-        tab1 = ttk.Frame(tabControl)
-        tabControl.add(tab1, text="Score")
-        tab2 = ttk.Frame(tabControl)
-        tabControl.add(tab2, text="Questions")
-        tabControl.pack(expand=1, fill="both")
-
-        # ============== set first tab =============
-        # set new Tab as Score
-        global averAccu_Frame
-        averAccu_Frame = ttk.Labelframe(tab1, text="Score Display")
-        averAccu_Frame.grid(column=0, row=0, padx=20, pady=20)
-
-        # create button: ImportFile
-        global impFile
-        impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.importFile)
-        impFile.grid(column=0, row=0, padx=10, pady=10)
-        # create button: importScore
-
-        global impScore
-        impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.importScore)
-        impScore.grid(column=1, row=0, padx=55, pady=10)
-
-        # set Person score part
-        ttk.Label(averAccu_Frame, text="Person's Score (%) : ").grid(column=0, row=1, padx=15, pady=10, sticky="e")
-        global aveAccur
-        aveAccur = tk.StringVar()
-
-        ttk.Label(averAccu_Frame, textvariable=aveAccur, width=20, borderwidth=2, anchor="center",
-                  relief="groove") \
-            .grid(column=1, row=1, padx=20, pady=10)
-
-        # create Exit button
-        global exitBut
-        exitBut = ttk.Button(averAccu_Frame, text="Exit", command=quit)
-        exitBut.grid(column=0, row=2, padx=10, pady=20)
-
-        global output_ScoreBut
-        output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
-        output_ScoreBut.grid(column=1, row=2, padx=15, pady=20)
-
-        # ============= set progressbar ==============
-        pBar_Frame = ttk.LabelFrame(tab1, text="Progressing...")
-        pBar_Frame.grid(column=0, row=1, padx=20, pady=10)
-        global progBar
-        progBar = ttk.Progressbar(pBar_Frame, length=350, mode="determinate", orient=tk.HORIZONTAL)
-        progBar.grid(column=0, row=0, padx=5, pady=10)
-
-        # ============ set new Tab for display each question's details =============
-
-        # add Question detail display part
-        global quesFrame
-        quesFrame = ttk.LabelFrame(tab2, text="Question-Accuracy display")
-        quesFrame.grid(column=0, row=0, padx=20, pady=20)
-
-        # create button: importDetail
-        global output_DetailBut
-        output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.displayDetail)
-        output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
-
-        # create clean button
-        clean_But = ttk.Button(quesFrame, text="Clean All", command=self.cleanAll)
-        clean_But.grid(column=1, row=0, padx=10, pady=10)
-
-        ttk.Label(quesFrame, text="Correct percentage for each question : ", wraplength=120, justify="center") \
-            .grid(column=0, row=1, padx=15, pady=15)
-
-        # add treeview display scores
-        global tree, columns
-        columns = ("Question ID", "Accuracy")
-        tree = ttk.Treeview(quesFrame, height=4, show="headings", columns=columns)
-        tree.column("Question ID", width=100, anchor="center")
-        tree.column("Accuracy", width=100, anchor="center")
-        tree.heading("Question ID", text="Question ID")
-        tree.heading("Accuracy", text="Accuracy")
-        tree.grid(column=1, row=1, padx=15, pady=5, sticky="NEWS")
-        tree.bind("<ButtonRelease-1>", self.quesDisplay)
-
-        # add tree Scrollbar
-        tScrollbar = ttk.Scrollbar(quesFrame, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=tScrollbar.set)
-        tScrollbar.grid(column=2, row=1, sticky="NS")
-
-        # =========== create new Frame for question display============
-        dispFrame = ttk.LabelFrame(tab2, text="Question display")
-        dispFrame.grid(column=0, row=1, padx=20, pady=10, sticky="w")
-
-        ttk.Label(dispFrame, text="Question display : ").grid(column=0, row=0, padx=15, pady=10)
-
-        global quesDisp
-        quesDisp = tk.StringVar()
-        ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
-                  relief="groove", wraplength=120).grid(column=1, row=0, padx=15, pady=20)
-
-        win.mainloop()
 
 
 if __name__ == "__main__":
     personZ = ckStat()
-    personZ.display()
-
+    personZ.win.mainloop()
