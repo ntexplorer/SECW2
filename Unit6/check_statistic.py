@@ -9,7 +9,7 @@ from tkinter import messagebox as msg
 from tkinter import ttk
 
 
-# import backstage_index as index
+import backstage_index as index
 """
 final_data = [
             {"id": 1, "question": "q1", "if_correct": 0},

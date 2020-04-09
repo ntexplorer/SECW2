@@ -8,51 +8,49 @@ import os  # Robert edit
 
 from tkinter import messagebox
 
-import choose_quiz as unit4
+# import choose_quiz as unit4
 
 
-question_mockup = [
-    {
-        'id': 1,
-        'question': 'question1',
-        'answers': ['a1', 'a2', 'A computer that has been broken by being flatted and crushed into another object',
-                    'a4'],
-        'correct_answer': 'a1'
-    },
-    {
-        'id': 2,
-        'question': 'question2',
-        'answers': ['a1.1', 'a2', 'a3'],
-        'correct_answer': 'a2'
-    },
-    {
-        'id': 3,
-        'question': 'question3',
-        'answers': ['a1.3', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 4,
-        'question': 'question4',
-        'answers': ['a1.4', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    },
-    {
-        'id': 5,
-        'question': 'question5',
-        'answers': ['a1.5', 'a2', 'a3'],
-        'correct_answer': 'a3'
-    }
-]
+# question_mockup = [
+#     {
+#         'id': 1,
+#         'question': 'question1',
+#         'answers': ['a1', 'a2', 'A computer that has been broken by being flatted and crushed into another object',
+#                     'a4'],
+#         'correct_answer': 'a1'
+#     },
+#     {
+#         'id': 2,
+#         'question': 'question2',
+#         'answers': ['a1.1', 'a2', 'a3'],
+#         'correct_answer': 'a2'
+#     },
+#     {
+#         'id': 3,
+#         'question': 'question3',
+#         'answers': ['a1.3', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     },
+#     {
+#         'id': 4,
+#         'question': 'question4',
+#         'answers': ['a1.4', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     },
+#     {
+#         'id': 5,
+#         'question': 'question5',
+#         'answers': ['a1.5', 'a2', 'a3'],
+#         'correct_answer': 'a3'
+#     }
+# ]
 
 # 模块化开发，统一标准，预留接口
 
 class RenderQuestions():
-    # TODO: add function to increase "file_number".  Robert edit
-    file_number = 0  # file_name is set for answer sheet's number
-    # R edit finished
 
     def __init__(self, window, quiz_list):
+
         self.window = window
         self.quiz_list = quiz_list
         self.q_length = len(quiz_list)  # The length of quiz
@@ -66,6 +64,9 @@ class RenderQuestions():
         self.corrected_answer = 0
         self.q_title = ''
         self.final_data = []
+        # Robert edit
+        self.file_number = 0  # file_name is set for answer sheet's number
+        # R edit finished
 
     def get_question_answer(self):
         question_show = self.quiz_list[self.index]['question']
@@ -198,26 +199,9 @@ class RenderQuestions():
         self.final_data.append(temp.copy())
         # print(self.final_data)
 
+    # ========= Robert edit ===========
     def get_final_data(self):
-        self.final_data_ls = []
-        self.temp_ls = []
-        for item in self.final_data:
-            self.temp_ls.append(item["id"])
-            self.temp_ls.append(item["question"])
-            self.temp_ls.append(item["if_correct"])
-            self.final_data_ls.append(tuple(self.temp_ls))
-            self.temp_ls = []
-            print(self.final_data_ls)
-        self.conn = sqlite3.connect("system.db")
-        self.c = self.conn.cursor()
-        self.c.execute('''CREATE TABLE IF NOT EXISTS STATISTICS (ID INTEGER NOT NULL, QUESTION 
-        TEXT NOT NULL, IF_CORRECT INTEGER NOT NULL)''')
-        self.c.executemany("INSERT INTO STATISTICS (ID, QUESTION, IF_CORRECT) VALUES (?, ?, ?)", self.final_data_ls)
-        self.conn.commit()
-        self.conn.close()
 
-        # ========= Robert edit ===========
-        # save each answer sheet data in a single file
         quizdata_folder = "result_data"  # create folder for storing answer sheets
 
         # the "file_name" below is set for answer sheet's number
@@ -233,10 +217,27 @@ class RenderQuestions():
             asw_data = open("{}.pk".format(self.file_number), "wb")
             pickle.dump(self.final_data, asw_data)
             asw_data.close()
+        self.file_number += 1
 
-        RenderQuestions.file_number += 1
-        print(RenderQuestions.file_number)
-        # ========== Edit finished ============
+        # self.final_data_ls = []
+        # self.temp_ls = []
+        # for item in self.final_data:
+        #     self.temp_ls.append(item["id"])
+        #     self.temp_ls.append(item["question"])
+        #     self.temp_ls.append(item["if_correct"])
+        #     self.final_data_ls.append(tuple(self.temp_ls))
+        #     self.temp_ls = []
+        #     print(self.final_data_ls)
+        # self.conn = sqlite3.connect("system.db")
+        # self.c = self.conn.cursor()
+        # self.c.execute('''CREATE TABLE IF NOT EXISTS STATISTICS (ID INTEGER NOT NULL, QUESTION
+        # TEXT NOT NULL, IF_CORRECT INTEGER NOT NULL)''')
+        # self.c.executemany("INSERT INTO STATISTICS (ID, QUESTION, IF_CORRECT) VALUES (?, ?, ?)", self.final_data_ls)
+        # self.conn.commit()
+        # self.conn.close()
+        # =======================================================
+        # save each answer sheet data in a single file
+        # ========== R Edit finished ============
 
     def clear_frame(self):
         for widget in self.question_frame.winfo_children():  # clear widgets in frame
