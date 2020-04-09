@@ -88,6 +88,7 @@ class QuizGen:
             self.tree4.insert("", END, values=row)
         self.conn.close()
 
+
     # Loading and displaying all current quiz in Treeview
     def quizTreeCurrent(self):
         self.conn = sqlite3.connect("system.db")
@@ -220,6 +221,7 @@ class QuizGen:
         self.cur = self.conn.cursor()
         try:
             self.cur.execute("CREATE TABLE IF NOT EXISTS CURRENT_QUIZ ("
+                             "PROFILE INTEGER PRIMARY KEY AUTOINCREMENT, "
                              "MCUSED INTEGER, "
                              "TFUSED INTEGER, "
                              "FOREIGN KEY (MCUSED) REFERENCES MC_QUIZ(QuizID), "
@@ -228,6 +230,12 @@ class QuizGen:
             self.conn.close()
         except sqlite3.OperationalError:
             pass
+
+        self.conn4 = sqlite3.connect("system.db")
+        self.cur4 = self.conn4.cursor()
+        self.cur4.execute("UPDATE CURRENT_QUIZ SET profile = 1")
+        self.conn4.commit()
+        self.conn4.close()
 
     # MC in use
     def mcInUse(self):
@@ -260,7 +268,7 @@ class QuizGen:
             self.rows = self.cur.fetchall()
             for row in self.rows:
                 print(row)
-                self.currentMC.append(row[0])
+                self.currentTF.append(row[0])
             self.conn.commit()
             self.conn.close()
         except sqlite3.OperationalError:
@@ -278,8 +286,10 @@ class QuizGen:
         self.cur = self.conn.cursor()
         self.cur.execute("UPDATE CURRENT_QUIZ SET MCUSED = ?, TFUSED = ?",
                          (self.boxSelectMC.get(), self.boxSelectTF.get()))
+        print("Use MC number ", self.boxSelectMC.get())
         self.conn.commit()
         self.conn.close()
+        self.quizTreeCurrent()
 
     # Difficulties for TF QUESTION combobox
 
@@ -370,11 +380,11 @@ class QuizGen:
                          "QuizID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                          "CATEGORY TEXT NOT NULL, "
                          "DIFFICULTY TEXT NOT NULL, "
-                         "q1Id TEXT, "
-                         "q2Id TEXT, "
-                         "q3Id TEXT, "
-                         "q4Id TEXT, "
-                         "q5Id TEXT, "
+                         "q1Id INTEGER, "
+                         "q2Id INTEGER, "
+                         "q3Id INTEGER, "
+                         "q4Id INTEGER, "
+                         "q5Id INTEGER, "
                          "FOREIGN KEY (q1Id) REFERENCES TF_QUESTION(pid), "
                          "FOREIGN KEY (q2Id) REFERENCES TF_QUESTION(pid), "
                          "FOREIGN KEY (q3Id) REFERENCES TF_QUESTION(pid), "
@@ -405,10 +415,10 @@ class QuizGen:
 
         self.conn3 = sqlite3.connect("system.db")
         self.cur3 = self.conn3.cursor()
-        self.cur.execute(
+        self.cur3.execute(
             "INSERT INTO TF_QUIZ (Category, Difficulty, q1Id, q2Id, q3Id, q4Id, q5Id) VALUES (?, ?, ?, ?, ?, ?, ?)", (
-            ''.join(self.boxCategoryTF.get()), ''.join(self.boxDifficultyTF.get()), self.qID[0][0], self.qID[1][0],
-            self.qID[2][0], self.qID[3][0], self.qID[4][0]))
+                ''.join(self.boxCategoryTF.get()), ''.join(self.boxDifficultyTF.get()), self.qID[0][0], self.qID[1][0],
+                self.qID[2][0], self.qID[3][0], self.qID[4][0]))
         self.conn3.commit()
         self.conn3.close()
         print("Insertion done for TF")
@@ -536,10 +546,11 @@ class QuizGen:
 
         # Tree for quiz in use
         self.tree5 = ttk.Treeview(self.tab7, column=(
-            "column", "colunn1", "colunn2"), show="headings")
+            "column", "colunn1", "profile"), show="headings")
         self.tree5.heading("#0", text="NUMBER")
-        self.tree5.heading("#1", text="Multi Choice Quiz")
-        self.tree5.heading("#2", text="True/False Quiz")
+        self.tree5.heading("#1", text="Profile")
+        self.tree5.heading("#2", text="Multi Choice Quiz")
+        self.tree5.heading("#3", text="True/False Quiz")
         self.tree5.pack()
 
         # Buttons for MC QUESTION
@@ -562,7 +573,7 @@ class QuizGen:
         self.bDispAllQuizesTF = Button(self.tab6, text="Display All True/False Quizzes", command=self.quizDispTF)
         self.bDispAllQuizesTF.pack(side=BOTTOM, ipady=50, expand=1)
 
-        # Button for quiz in use
+        #Button for quiz in use
         self.bUseQuiz = Button(self.tab7, text="Use those quizes", command=self.useQuiz)
         self.bUseQuiz.pack(side=BOTTOM, ipady=30, pady=15, expand=1)
 
