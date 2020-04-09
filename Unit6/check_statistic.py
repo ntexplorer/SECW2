@@ -92,18 +92,20 @@ class ckStat():
         menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Back", command=self.go_back)
 
-        # create Tabs
+        # ========== create "Score" Tab ==========
         tabCtrl = ttk.Notebook(self.win, padding=2)
         tab1 = ttk.Frame(tabCtrl)
         tabCtrl.add(tab1, text="Score")
+        # tab2 = ttk.Frame(tabCtrl)
+        # tabCtrl.add(tab2, text="Question")
         tabCtrl.pack(expand=1, fill="both")
 
-        # set "Score" Tab
+        # ========== set "Score" Tab ==========
         average_score_Frame = ttk.LabelFrame(tab1, text="Score Display")
         average_score_Frame.grid(column=0, row=0, padx=20, pady=15)
 
         # display Label:"Score"
-        ttk.Label(average_score_Frame, text="This person's Score (%) : ") \
+        ttk.Label(average_score_Frame, text="The average Score (%) : ") \
             .grid(column=0, row=1, padx=15, pady=10, sticky="e")
 
         # set person's score here
