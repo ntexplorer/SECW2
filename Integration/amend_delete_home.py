@@ -25,15 +25,15 @@ class amendDeleteQuestions(Frame):
     def create_buttons(self):
 
         buttonViewQuestions = Button(self, text='Refresh Stored Questions', font=('Helvetica', 15), justify="center")
-        buttonViewQuestions['command']=self.refreshQuestions
+        buttonViewQuestions['command']=self.refresh_questions
         buttonViewQuestions.grid(row=1, column=1, columnspan=2, padx=10, pady=10)
 
         buttonSubmit = Button(self, text='Submit', font=('Helvetica', 15), justify="center")
-        buttonSubmit['command']=self.storeResponse
+        buttonSubmit['command']=self.store_response
         buttonSubmit.grid(row=12, column=1, columnspan=2, padx=10, pady=10)
 
         buttonExit = Button(self, text='Back', font=('Helvetica', 15), justify="center")
-        buttonExit['command'] = self.closeWindow
+        buttonExit['command'] = self.close_window
         buttonExit.grid(row=13, column=1, columnspan=2, padx=10, pady=10)
 
         # Create scroll bar function; to show list of questions stored in system.db
@@ -49,12 +49,11 @@ class amendDeleteQuestions(Frame):
 
         # Present and refresh questions stored in system.db
 
-    def refreshQuestions(self):
+    def refresh_questions(self):
 
         self.listQuestions.delete(0, END)
 
         conn = sqlite3.connect('system.db')
-        c = conn.cursor ()
 
         with conn:
             cur = conn.execute("SELECT * FROM MC_QUESTION")
@@ -119,19 +118,22 @@ class amendDeleteQuestions(Frame):
 
         # Store Respnse (in shelve) function
 
-    def storeResponse(self):
+    def store_response(self):
 
         strEntID = self.entID.get()
         strMsg=""
 
         if strEntID == "":
             strMsg = "You need to specify a Question ID. "
+            self.clear_response()
 
-        if (self.varType.get() == 0):
-            strMsg = strMsg + "You need to select a Question Type. "
+        elif (self.varType.get() == 0):
+            strMsg = "You need to select a Question Type. "
+            self.clear_response()
 
-        if (self.varAmendDelete.get() == 0):
-            strMsg = strMsg + "You need to select Amend or Delete. "
+        elif (self.varAmendDelete.get() == 0):
+            strMsg = "You need to select Amend or Delete. "
+            self.clear_response()
 
         if strMsg == "":
 
@@ -145,17 +147,17 @@ class amendDeleteQuestions(Frame):
 
             if (self.varAmendDelete.get() == 2) and (self.varType.get() == 1):
 
-                self.removeMCQuestion(Ans)
-                self.clearResponse()
+                self.remove_MCQuestion(Ans)
+                self.clear_response()
 
             elif (self.varAmendDelete.get() == 2) and (self.varType.get() == 2):
 
-                self.removeTFQuestion(Ans)
-                self.clearResponse()
+                self.remove_TFQuestion(Ans)
+                self.clear_response()
 
             else:
 
-                self.openAmendWindow(Ans)
+                self.open_amend_window(Ans)
 
         else:
 
@@ -163,7 +165,7 @@ class amendDeleteQuestions(Frame):
 
         # Clear GUI function
 
-    def clearResponse(self):
+    def clear_response(self):
 
         self.varAmendDelete.set(0)
         self.varType.set(0)
@@ -172,12 +174,11 @@ class amendDeleteQuestions(Frame):
 
         # Delete MC question from system.db function
 
-    def removeMCQuestion(self, Ans):
+    def remove_MCQuestion(self, Ans):
 
         qID = int(Ans.qID)
 
         conn = sqlite3.connect('system.db')
-        c = conn.cursor ()
 
         with conn:
 
@@ -185,7 +186,9 @@ class amendDeleteQuestions(Frame):
 
             cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
-                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(
+                    qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                self.clear_response()
             else:
 
                 # If it does exist, run DELETE MC execution
@@ -197,12 +200,11 @@ class amendDeleteQuestions(Frame):
 
         # Delete TF question from system.db function
 
-    def removeTFQuestion(self, Ans):
+    def remove_TFQuestion(self, Ans):
 
         qID = int(Ans.qID)
 
         conn = sqlite3.connect('system.db')
-        c = conn.cursor ()
 
         with conn:
 
@@ -210,7 +212,9 @@ class amendDeleteQuestions(Frame):
 
             cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
             if len(cur.fetchall()) == 0:
-                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                tkinter.messagebox.showwarning("Question Delete", "Question (ID: " + str(
+                    qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                self.clear_response()
             else:
 
                 # If it does exist, run DELETE TF execution
@@ -222,12 +226,11 @@ class amendDeleteQuestions(Frame):
 
         # Open Amend Window function
 
-    def openAmendWindow(self, Ans):
+    def open_amend_window(self, Ans):
 
         qID = int(Ans.qID)
 
         conn = sqlite3.connect('system.db')
-        c = conn.cursor ()
 
         with conn:
 
@@ -236,7 +239,9 @@ class amendDeleteQuestions(Frame):
             if (Ans.radioValType == 1):
                 cur = conn.execute("SELECT * FROM MC_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
-                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(
+                        qID) + ") NOT FOUND. Enter a valid Multiple Choice ID")
+                    self.clear_response()
 
                     # If MC ID does exist (length of fetchall > 0), open Amend Window
 
@@ -245,7 +250,7 @@ class amendDeleteQuestions(Frame):
                     t1.title("Amend Question")
                     t1.geometry("1100x800")
                     amendQuestion(t1)
-                    self.clearResponse()
+                    self.clear_response()
 
 
             # If TF radio selected (with amend), SQLite execution to check ID exists
@@ -253,7 +258,9 @@ class amendDeleteQuestions(Frame):
             if (Ans.radioValType == 2):
                 cur = conn.execute("SELECT * FROM TF_QUESTION WHERE PID = {i}".format(i=qID))
                 if len(cur.fetchall()) == 0:
-                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                    tkinter.messagebox.showwarning("Question Amend", "Question (ID: " + str(
+                        qID) + ") NOT FOUND. Enter a valid True/ False ID")
+                    self.clear_response()
                 else:
 
                     # If TF ID does exist (length of fetchall > 0), open Amend Window
@@ -262,13 +269,13 @@ class amendDeleteQuestions(Frame):
                     t1.title("Amend Question")
                     t1.geometry("1100x800")
                     amendQuestion(t1)
-                    self.clearResponse()
+                    self.clear_response()
 
         conn.commit()
 
         # Close Main Window function
 
-    def closeWindow(self):
+    def close_window(self):
         self.master.destroy()
         app = bks.GUI()
         app.win.mainloop()

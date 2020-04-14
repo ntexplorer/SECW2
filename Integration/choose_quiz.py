@@ -11,7 +11,7 @@ from tkinter import messagebox as msg
 from tkinter import ttk
 
 import new_homepage as home
-import quiz_button as quiz
+import take_quiz as quiz
 
 
 def error_popup():
@@ -27,7 +27,7 @@ class Window:
         self.question_radio = IntVar()
         self.init_window()
 
-    # the following function sets out the GUI layout. Radiobutton as been used for selection so that only one choice
+    # the following function sets out the GUI layout. Radiobutton has been used for selection so that only one choice
     # can be made to reduce potential errors.
 
     def init_window(self):
@@ -80,7 +80,7 @@ class Window:
         try:
             db = sqlite3.connect("system.db")
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM MC_QUESTION ORDER BY RANDOM()")
+            cursor.execute("SELECT * FROM MC_QUESTION ORDER BY RANDOM() LIMIT 5")
             x = cursor.fetchall()
             cursor.close()
             question_mockup = []
@@ -100,7 +100,7 @@ class Window:
         try:
             db = sqlite3.connect("system.db")
             cursor = db.cursor()
-            cursor.execute("SELECT * FROM TF_QUESTION ORDER BY RANDOM()")
+            cursor.execute("SELECT * FROM TF_QUESTION ORDER BY RANDOM() LIMIT 5")
             x = cursor.fetchall()
             cursor.close()
             question_mockup = []

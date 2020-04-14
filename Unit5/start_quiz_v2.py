@@ -37,8 +37,6 @@ question_mockup = [
 ]
 
 # 模块化开发，统一标准，预留接口
-# restart 直接把前面的类 import 进来
-# * radio要点击了之后才会把数据传到变量里面，所以值不能通过command传，要在command的函数里面才能拿到
 
 class RenderQuestions():
     def __init__(self, window, quiz_list):
@@ -99,7 +97,7 @@ class RenderQuestions():
         if chosen_answer == correct:
             self.corrected_answer += 1
             self.clear_frame()
-            tk.Label(self.question_frame, text='Congradulations! Correct Answer :)', font=self.l_style).pack(pady=20)
+            tk.Label(self.question_frame, text='Congratulations! Correct Answer :)', font=self.l_style).pack(pady=20)
             tk.Button(self.question_frame, text='Next', command=lambda: self.next_click('next')).pack(ipadx=self.ipad_x,
                                                                                                       ipady=self.ipad_y)
             self.data_collection(self.q_id, self.q_title, 1)

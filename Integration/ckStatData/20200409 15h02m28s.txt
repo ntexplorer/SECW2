@@ -1,0 +1,35 @@
+The score for this person: 56.25%
+
+
+The calculate for each questions: 
+
+Q17: 100.00%
+ 
+Q23: 100.00%
+ 
+Q22: 100.00%
+ 
+Q32: 100.00%
+ 
+Q24: 100.00%
+ 
+Q21: 100.00%
+ 
+Q2: 100.00%
+
+
+Here are the question lists. 
+
+Q14: This is the sample question 7
+ 
+Q17: This is the sample question 3
+ 
+Q28: This is the sample question 2
+ 
+Q23: This is the sample question 1
+ 
+Q22: This is the sample question 9
+ 
+Q50: This is the sample question 4
+ 
+Q30: This is the sample question 10

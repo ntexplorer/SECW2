@@ -1,10 +1,10 @@
+# Question Classes
 
 # Multiple Choice Queston Class
 
 class questionMCClass:
     def __init__(self, qID=0, category="", difficulty="", type="Multiple Choice", question="",
                  correct="", wrong1="", wrong2="", wrong3=""):
-
         self.qID = qID
         self.category = category
         self.difficulty = difficulty
