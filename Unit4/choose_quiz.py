@@ -10,8 +10,8 @@ from tkinter import *
 from tkinter import messagebox as msg
 from tkinter import ttk
 
-import new_homepage as home
-import quiz_button as quiz
+# import new_homepage as home
+# import quiz_button as quiz
 
 
 def error_popup():

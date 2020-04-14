@@ -79,7 +79,7 @@ class ckStat:
 
         # create File bar
         menu_bar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Clean", command=self.cleanAll)
+        file_menu.add_command(label="Clean", command=self.clear_all)
         file_menu.add_separator()
         file_menu.add_command(label="Back", command=self.go_back)
 
@@ -97,14 +97,14 @@ class ckStat:
         averAccu_Frame = ttk.Labelframe(tab1, text="Score Display")
         averAccu_Frame.grid(column=0, row=0, padx=20, pady=20)
 
-        # create button: ImportFile
+        # create button: import_file
         global impFile
-        impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.importFile)
+        impFile = ttk.Button(averAccu_Frame, text="Import File (First)", command=self.import_file)
         impFile.grid(column=0, row=0, padx=10, pady=10)
-        # create button: importScore
+        # create button: import_score
 
         global impScore
-        impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.importScore)
+        impScore = ttk.Button(averAccu_Frame, text="Show Score (Second)", command=self.import_score)
         impScore.grid(column=1, row=0, padx=55, pady=10)
 
         # set Person score part
@@ -122,7 +122,7 @@ class ckStat:
         exitBut.grid(column=0, row=2, padx=10, pady=20)
 
         global output_ScoreBut
-        output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.outputTXT)
+        output_ScoreBut = ttk.Button(averAccu_Frame, text="Output in txt", command=self.output_txt)
         output_ScoreBut.grid(column=1, row=2, padx=15, pady=20)
 
         # ============= set progressbar ==============
@@ -141,11 +141,11 @@ class ckStat:
 
         # create button: importDetail
         global output_DetailBut
-        output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.displayDetail)
+        output_DetailBut = ttk.Button(quesFrame, text="Display Detail", command=self.display_detail)
         output_DetailBut.grid(column=0, row=0, padx=10, pady=10)
 
         # create clean button
-        clean_But = ttk.Button(quesFrame, text="Clean All", command=self.cleanAll)
+        clean_But = ttk.Button(quesFrame, text="Clean All", command=self.clear_all)
         clean_But.grid(column=1, row=0, padx=10, pady=10)
 
         ttk.Label(quesFrame, text="Correct percentage for each question : ", wraplength=120, justify="center") \
@@ -160,7 +160,7 @@ class ckStat:
         tree.heading("Question ID", text="Question ID")
         tree.heading("Accuracy", text="Accuracy")
         tree.grid(column=1, row=1, padx=15, pady=5, sticky="NEWS")
-        tree.bind("<ButtonRelease-1>", self.quesDisplay)
+        tree.bind("<ButtonRelease-1>", self.question_display)
 
         # add tree Scrollbar
         tScrollbar = ttk.Scrollbar(quesFrame, orient="vertical", command=tree.yview)
@@ -178,7 +178,7 @@ class ckStat:
         ttk.Label(dispFrame, textvariable=quesDisp, width=30, borderwidth=2, anchor="center", justify="center",
                   relief="groove", wraplength=120).grid(column=1, row=0, padx=15, pady=20)
 
-    def doCalculate(self, listPpl):
+    def do_calculate(self, listPpl):
 
         personQuiz = listPpl
 
@@ -248,7 +248,7 @@ class ckStat:
         for keys, values in newDic.items():
             ckStat.QuesWithID_List.append("\nQ{}: {}\n".format(keys, str(values)))
 
-    def outputTXT(self):  # output data into .txt
+    def output_txt(self):  # output data into .txt
         folderName = "ckStatData"
 
         text = ["The score for this person: {:.2%}\n\n".format(ckStat.accuForPpl),
@@ -285,13 +285,13 @@ class ckStat:
         self.win.mainloop()
 
     # display score
-    def importScore(self):
+    def import_score(self):
         impScore.grid_remove()
         impScore.grid()
         aveAccur.set("{:.2%}".format(ckStat.accuForPpl))
 
     # display Questions
-    def quesDisplay(self, event):
+    def question_display(self, event):
         self.item = list(tree.item(tree.selection()[0], "values"))
         QID_List = ckStat.QuesWithID_List
         for i in range(len(QID_List)):
@@ -299,17 +299,17 @@ class ckStat:
                 quesDisp.set("{}".format(QID_List[i]))
 
     # ================ import data ================
-    def importFile(self):
+    def import_file(self):
         for i in range(100):
             progBar["value"] = i + 1
             averAccu_Frame.update()
             time.sleep(0.007)
         impFile.grid_remove()
         if ckStat.quizID == 0:
-            self.doCalculate(self.retrieve_data())
+            self.do_calculate(self.retrieve_data())
             ckStat.quizID += 1
         else:
-            self.doCalculate(self.retrieve_data())
+            self.do_calculate(self.retrieve_data())
             ckStat.quizID += 1
         msg.showinfo("Congratulations", "File import complete. \n")
         impFile.grid()
@@ -329,7 +329,7 @@ class ckStat:
         return self.statistics_mockup
 
     # clean label and tree
-    def cleanAll(self):
+    def clear_all(self):
         x = tree.get_children()
         for item in x:
             tree.delete(item)
@@ -337,7 +337,7 @@ class ckStat:
         aveAccur.set("")
 
     # display detail of each question
-    def displayDetail(self):
+    def display_detail(self):
         output_DetailBut.grid_remove()
         output_DetailBut.grid()
         # display Question-Accuracy

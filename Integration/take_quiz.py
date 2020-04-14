@@ -26,22 +26,8 @@ import choose_quiz as unit4
 #         'question': 'question3',
 #         'answers': ['a1.3', 'a2', 'a3'],
 #         'correct_answer': 'a3'
-#     },
-#     {
-#         'id': 4,
-#         'question': 'question4',
-#         'answers': ['a1.4', 'a2', 'a3'],
-#         'correct_answer': 'a3'
-#     },
-#     {
-#         'id': 5,
-#         'question': 'question5',
-#         'answers': ['a1.5', 'a2', 'a3'],
-#         'correct_answer': 'a3'
 #     }
 # ]
-
-# 模块化开发，统一标准，预留接口
 
 class RenderQuestions():
     def __init__(self, window, quiz_list):
@@ -84,8 +70,7 @@ class RenderQuestions():
         for i in range(len(choices)):
             button = tk.Button(self.question_frame,
                                text=choices[i], width=30, font=self.b_style, wraplength=200, pady=10, padx=5,
-                               command=lambda chosen_answer=choices[i], correct=quiz_data[2]: self.option_click(
-                                   chosen_answer, correct))
+                               command=lambda chosen_answer=choices[i], correct=quiz_data[2]: self.option_click(chosen_answer, correct))
             i += 1
             button.pack(pady=5)
 
@@ -132,32 +117,22 @@ class RenderQuestions():
             self.finish_quiz('main')
 
     def finish_quiz(self, type):
-        # Alert pops up when user try to finish the whole quiz
+        # Alert window pops up when user try to finish the whole quiz
         if type == 'finish_clicked':
             if_finish = tk.messagebox.askyesno(title='Confirmation', message='Are you sure to finish the whole quiz?')
             if if_finish:
                 self.clear_frame()
                 self.result_display()
-                # 拿到目前的题目ID，用总长度减去目前的得到剩余的题目长度来循环
-                # 循环的时候让目前题目ID加上增量 i ，以把剩下的题目都判断为错
                 # When pupil chose finish, the rest of questions are all marked as wrong 
                 # Get the current question ID and use the total length of quiz question subtract 
                 # the current ID to get the remaining question length to loop as wrong answers
                 current_id = self.q_id
                 left_question = self.q_length - current_id + 1
-                # * 拿到目前的题目下标，然后用总长度减去目前的看还剩几个
-                # * 用剩的题目循环，从目前的标下开始传题目问题
 
                 for i in range(left_question):
                     temp = self.quiz_list[current_id + i - 1]['question']  # Current question
                     self.data_collection(current_id + i, temp, 0)
                 print(self.final_data)
-
-                # for current_id in range(len(self.quiz_list)):
-                #     new_index = current_id + 1
-                #     if len(self.quiz_list) - current_id > 0:
-                #         print(self.quiz_list[current_id]['question'])
-                #     print(new_index)
 
             else:
                 return False
